@@ -798,7 +798,15 @@ body {
     }
     .checker-result-card { padding: 28px 20px; border-radius: 16px; }
     .checker-result-rank { font-size: 48px; }
-    .share-section { padding: 20px; margin-top: 20px; }
+    .share-section {
+        padding: 24px 20px;
+        margin: 24px auto 0;
+        max-width: 100%;
+    }
+    .share-title {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
     .share-buttons { flex-direction: column; gap: 12px; }
     .share-btn {
         padding: 14px 20px;
@@ -896,20 +904,22 @@ body {
 
 /* ── Share Section ── */
 .share-section {
-    margin-top: 32px;
-    padding: 28px;
-    background: linear-gradient(135deg, rgba(0,113,227,0.04) 0%, rgba(175,82,222,0.04) 100%);
+    margin: 32px auto 0;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(175,82,222,0.08) 100%);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
+    border: 2px solid var(--accent);
+    box-shadow: 0 4px 20px rgba(0,113,227,0.08);
+    max-width: 600px;
 }
 
 .share-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 24px;
     text-align: center;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
 }
 
 .share-buttons {
