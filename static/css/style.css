@@ -226,6 +226,7 @@ body {
     align-items: center;
     justify-content: space-evenly;
     flex-wrap: wrap;
+    flex: 1;
 }
 
 .balls-divider {
