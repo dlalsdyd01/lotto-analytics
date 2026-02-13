@@ -474,8 +474,8 @@ body {
 .info-card p {
     font-size: 14px;
     color: var(--text-2);
-    line-height: 1.9;
-    margin-bottom: 14px;
+    line-height: 1.8;
+    margin-bottom: 18px;
     padding-left: 0;
 }
 
@@ -485,10 +485,10 @@ body {
 
 .info-card strong {
     color: var(--accent);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
-    display: inline-block;
-    margin-right: 8px;
+    display: block;
+    margin-bottom: 6px;
 }
 
 .info-warn {
