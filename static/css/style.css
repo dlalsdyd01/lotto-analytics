@@ -31,24 +31,27 @@ body {
 
 /* ── Layout Wrapper (사이드바 + 메인) ── */
 .layout-wrapper {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 160px 1fr 160px;
     gap: 20px;
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
+    align-items: start;
 }
 
 .sidebar-ad {
     position: sticky;
     top: 80px;
     height: fit-content;
-    flex-shrink: 0;
 }
 
-.sidebar-left,
+.sidebar-left {
+    justify-self: start;
+}
+
 .sidebar-right {
-    width: 160px;
+    justify-self: end;
 }
 
 /* 모바일에서는 사이드바 숨김 */
@@ -57,7 +60,7 @@ body {
         display: none;
     }
     .layout-wrapper {
-        justify-content: center;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -139,8 +142,8 @@ body {
 
 /* ── Layout ── */
 .container {
-    flex: 1;
     max-width: 1080px;
+    margin: 0 auto;
     padding: 24px;
 }
 
