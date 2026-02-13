@@ -769,9 +769,52 @@ body {
     .card {
         margin-bottom: 16px;
     }
+
+    /* === 1번: 예측 탭 개선 === */
+    .pred-card {
+        text-align: center;
+    }
+    .pred-desc {
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
+    .card-header {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    /* === 2번: 당첨번호 테이블 개선 === */
+    .tbl {
+        font-size: 13px;
+    }
+    .tbl th {
+        font-size: 12px;
+        padding: 10px 6px;
+    }
+    .tbl td {
+        padding: 12px 6px;
+    }
+
+    /* === 3번: 통계 탭 - 번호 그리드 한 줄로 === */
+    .num-grid {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+        gap: 8px;
+    }
+    .num-item {
+        flex-shrink: 0;
+    }
+    .num-grid .ball {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
 }
 
-/* 작은 모바일 (360px 이하) */
+/* 작은 모바일 (480px 이하) */
 @media (max-width: 480px) {
     .checker-title { font-size: 22px; }
     .checker-num { width: 44px; height: 44px; font-size: 16px; }
@@ -781,6 +824,26 @@ body {
     .layout-wrapper { padding: 0 8px; }
     .container { padding: 12px; }
     .tab-item { font-size: 13px; padding: 10px 12px; }
+
+    /* 작은 화면에서 번호 더 작게 */
+    .num-grid {
+        gap: 6px;
+    }
+    .num-grid .ball {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    /* 테이블 더 압축 */
+    .tbl th, .tbl td {
+        padding: 8px 4px;
+    }
+
+    /* 예측 카드 */
+    .pred-desc {
+        font-size: 12px;
+    }
 }
 
 /* ── Share Section ── */
