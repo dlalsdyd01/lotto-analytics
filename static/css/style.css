@@ -224,7 +224,7 @@ body {
 .balls-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 
