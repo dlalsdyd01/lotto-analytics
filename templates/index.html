@@ -48,25 +48,25 @@
     </div>
 </div>
 
-<div class="container">
-    <!-- 광고 1: 상단 배너 (첫 화면에 보이므로 효과적) -->
-    <div class="ad-container" style="text-align:center; padding:20px 0; margin-bottom:20px;">
-        <!-- AdSense 디스플레이 광고 (728x90 또는 반응형) -->
+<div class="layout-wrapper">
+    <!-- 왼쪽 사이드바 광고 -->
+    <aside class="sidebar-ad sidebar-left">
         <!--
         <ins class="adsbygoogle"
-             style="display:block"
+             style="display:inline-block;width:160px;height:600px"
              data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="1234567890"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+             data-ad-slot="LEFT_SIDEBAR_SLOT"></ins>
         <script>
              (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
         -->
-        <div style="background:#f0f0f0; padding:50px; border-radius:8px; color:#999;">
-            광고 영역 1 (상단 배너)
+        <div style="background:#f0f0f0; width:160px; height:600px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; text-align:center; padding:10px;">
+            왼쪽<br>사이드바<br>광고<br>(160x600)
         </div>
-    </div>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="container">
 
     <div id="loading" class="loading">
         <div class="spinner"></div>
@@ -128,24 +128,6 @@
 
     <!-- 통계 -->
     <div id="tab-stats" class="tab-content">
-        <!-- 광고 2: 통계 탭 상단 -->
-        <div class="ad-container" style="text-align:center; padding:16px 0; margin-bottom:20px;">
-            <!--
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                 data-ad-slot="9876543210"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            -->
-            <div style="background:#f0f0f0; padding:40px; border-radius:8px; color:#999;">
-                광고 영역 2 (통계 탭 상단)
-            </div>
-        </div>
-
         <div class="g2 fade-in">
             <div class="card">
                 <div class="card-header">자주 나온 번호</div>
@@ -188,24 +170,6 @@
 
     <!-- 예측 -->
     <div id="tab-prediction" class="tab-content">
-        <!-- 광고 3: 예측 탭 상단 (가장 중요한 위치!) -->
-        <div class="ad-container" style="text-align:center; padding:16px 0; margin-bottom:20px;">
-            <!--
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                 data-ad-slot="1111111111"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            -->
-            <div style="background:#f0f0f0; padding:40px; border-radius:8px; color:#999;">
-                광고 영역 3 (예측 탭 - 핵심 위치)
-            </div>
-        </div>
-
         <div class="pred-card fade-in">
             <div class="card-header">추천 번호</div>
             <div class="pred-desc">
@@ -255,24 +219,25 @@
         </div>
     </div>
 
-    <!-- 광고 4: 하단 배너 -->
-    <div class="ad-container" style="text-align:center; padding:20px 0; margin-top:40px;">
+    </div><!-- container 닫기 -->
+
+    <!-- 오른쪽 사이드바 광고 -->
+    <aside class="sidebar-ad sidebar-right">
         <!--
         <ins class="adsbygoogle"
-             style="display:block"
+             style="display:inline-block;width:160px;height:600px"
              data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="2222222222"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+             data-ad-slot="RIGHT_SIDEBAR_SLOT"></ins>
         <script>
              (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
         -->
-        <div style="background:#f0f0f0; padding:50px; border-radius:8px; color:#999;">
-            광고 영역 4 (하단 배너)
+        <div style="background:#f0f0f0; width:160px; height:600px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; text-align:center; padding:10px;">
+            오른쪽<br>사이드바<br>광고<br>(160x600)
         </div>
-    </div>
-</div>
+    </aside>
+
+</div><!-- layout-wrapper 닫기 -->
 
 <script>
 let appData = null;

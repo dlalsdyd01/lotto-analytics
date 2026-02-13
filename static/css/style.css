@@ -29,6 +29,38 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Layout Wrapper (사이드바 + 메인) ── */
+.layout-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.sidebar-ad {
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+    flex-shrink: 0;
+}
+
+.sidebar-left,
+.sidebar-right {
+    width: 160px;
+}
+
+/* 모바일에서는 사이드바 숨김 */
+@media (max-width: 1200px) {
+    .sidebar-ad {
+        display: none;
+    }
+    .layout-wrapper {
+        justify-content: center;
+    }
+}
+
 /* ── Header ── */
 .header {
     background: rgba(255,255,255,0.72);
@@ -107,8 +139,8 @@ body {
 
 /* ── Layout ── */
 .container {
+    flex: 1;
     max-width: 1080px;
-    margin: 0 auto;
     padding: 24px;
 }
 
