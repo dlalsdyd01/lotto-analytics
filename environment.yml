@@ -1,0 +1,11 @@
+name: lotto
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+    - flask
+    - pandas
+    - numpy
+    - requests

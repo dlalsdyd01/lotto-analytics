@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotto Lab</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <span class="logo">Lotto Lab</span>
+        <button class="header-btn" onclick="refreshData(event)">데이터 갱신</button>
+    </div>
+</header>
+
+<div style="background:rgba(255,255,255,0.72); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--border);">
+    <div class="tab-bar">
+        <button class="tab-item active" data-tab="checker">당첨확인</button>
+        <button class="tab-item" data-tab="history">당첨번호</button>
+        <button class="tab-item" data-tab="stats">통계</button>
+        <button class="tab-item" data-tab="prediction">예측</button>
+    </div>
+</div>
+
+<div class="container">
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">불러오는 중</div>
+    </div>
+
+    <!-- 당첨확인 -->
+    <div id="tab-checker" class="tab-content">
+        <div class="checker-hero fade-in">
+            <div class="checker-latest" id="checker-latest-info"></div>
+            <div class="checker-title">내 번호 확인하기</div>
+            <div class="checker-subtitle">번호 6개를 입력하고 최신 회차 당첨 여부를 확인하세요</div>
+
+            <div class="checker-input-wrap">
+                <div class="checker-balls-input" id="checker-balls">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn1">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn2">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn3">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn4">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn5">
+                    <input type="number" class="checker-num" min="1" max="45" placeholder="?" id="cn6">
+                </div>
+                <div class="checker-actions">
+                    <button class="checker-btn" onclick="checkMyNumbers()">당첨 확인</button>
+                    <button class="checker-quick-btn" onclick="clearChecker()">초기화</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="checker-result" class="fade-in" style="display:none;">
+            <div class="checker-result-card" id="checker-summary"></div>
+        </div>
+    </div>
+
+    <!-- 당첨번호 -->
+    <div id="tab-history" class="tab-content">
+        <div class="card fade-in">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                <div class="card-header" style="margin-bottom:0;">역대 당첨번호</div>
+                <input type="text" class="search" id="search-draw" placeholder="회차 검색" oninput="searchDraws()">
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>회차</th>
+                            <th>추첨일</th>
+                            <th>당첨번호</th>
+                            <th>보너스</th>
+                            <th>1등 당첨금</th>
+                        </tr>
+                    </thead>
+                    <tbody id="draws-tbody"></tbody>
+                </table>
+            </div>
+            <div id="pagination" class="pager"></div>
+        </div>
+    </div>
+
+    <!-- 통계 -->
+    <div id="tab-stats" class="tab-content">
+        <div class="g2 fade-in">
+            <div class="card">
+                <div class="card-header">자주 나온 번호</div>
+                <div id="hot-numbers" class="num-grid"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">적게 나온 번호</div>
+                <div id="cold-numbers" class="num-grid"></div>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">최근 50회 출현 빈도</div>
+            <div class="chart-wrap"><canvas id="recentFreqChart"></canvas></div>
+        </div>
+
+        <div class="g2 fade-in">
+            <div class="card">
+                <div class="card-header">구간별 비율</div>
+                <div class="chart-wrap" style="height:260px;"><canvas id="rangeChart"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-header">홀짝 분석</div>
+                <div id="odd-even-stats"></div>
+            </div>
+        </div>
+
+        <div class="g2 fade-in">
+            <div class="card">
+                <div class="card-header">연속번호</div>
+                <div id="consecutive-stats"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">번호 합계</div>
+                <div id="sum-stats"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 예측 -->
+    <div id="tab-prediction" class="tab-content">
+        <div class="pred-card fade-in">
+            <div class="card-header">추천 번호</div>
+            <div class="pred-desc">
+                과거 데이터의 출현 빈도와 최근 트렌드를 분석하여 생성된 번호입니다.<br>
+                매주 일요일에 새로운 번호로 갱신됩니다.<br>
+                추천번호는 사용자마다 다르게 생성됩니다.
+            </div>
+            <div id="prediction-sets"></div>
+        </div>
+
+        <div class="info-card fade-in">
+            <div class="card-header">분석 방법</div>
+            <p><strong>출현 빈도 30%</strong> &mdash; 역대 전체 회차에서의 각 번호 출현 비율</p>
+            <p><strong>최근 트렌드 40%</strong> &mdash; 최근 50회차 출현 빈도에 가장 높은 가중치 부여</p>
+            <p><strong>구간 균형 20%</strong> &mdash; 1~10, 11~20, 21~30, 31~40, 41~45 균형 배분</p>
+            <p><strong>무작위성 10%</strong> &mdash; 확률적 다양성을 위한 무작위 요소</p>
+            <div class="info-warn">
+                로또는 완전한 확률 게임입니다. 본 분석은 통계적 참고 자료이며 당첨을 보장하지 않습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let appData = null;
+let currentPage = 1;
+let charts = {};
+
+function getBallClass(n) {
+    if (n <= 10) return 'ball-1';
+    if (n <= 20) return 'ball-2';
+    if (n <= 30) return 'ball-3';
+    if (n <= 40) return 'ball-4';
+    return 'ball-5';
+}
+
+function renderBall(n, size = '', extra = '') {
+    const sc = size === 'lg' ? 'ball-lg' : size === 'sm' ? 'ball-sm' : '';
+    return `<span class="ball ${getBallClass(n)} ${sc} ${extra}">${n}</span>`;
+}
+
+function formatMoney(val) {
+    if (!val) return '-';
+    const b = val / 100000000;
+    return b >= 1 ? b.toFixed(0) + '억' : (val / 10000).toFixed(0) + '만';
+}
+
+// Tabs
+document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+});
+
+// Load
+async function loadData() {
+    document.getElementById('loading').style.display = 'flex';
+    try {
+        const resp = await fetch('/api/data');
+        if (resp.status === 202) { pollStatus(); return; }
+        appData = await resp.json();
+        if (appData.error) { pollStatus(); return; }
+        renderAll();
+    } catch (e) {
+        document.getElementById('loading').innerHTML =
+            '<div class="loading-text">연결할 수 없습니다</div>';
+    }
+}
+
+async function pollStatus() {
+    const resp = await fetch('/api/status');
+    const s = await resp.json();
+    if (s.ready || s.cached_count > 100) { loadData(); return; }
+    const pct = s.total > 0 ? Math.round(s.progress / s.total * 100) : 0;
+    document.getElementById('loading').innerHTML = `
+        <div class="spinner"></div>
+        <div class="loading-text">데이터 수집 중 ${pct}%</div>
+        <div style="width:200px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:var(--text-2);transition:width 0.3s;"></div>
+        </div>`;
+    setTimeout(pollStatus, 2000);
+}
+
+function renderAll() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('tab-checker').classList.add('active');
+    renderCheckerInfo();
+    renderDrawsTable();
+    renderHotCold();
+    renderRecentFreqChart();
+    renderRangeChart();
+    renderOddEven();
+    renderConsecutive();
+    renderSumStats();
+    loadOrCreatePredictions();
+}
+
+// Hot/Cold
+function renderHotCold() {
+    const render = (nums, id) => {
+        document.getElementById(id).innerHTML = nums.map(item => `
+            <div class="num-item">
+                ${renderBall(item.number)}
+                <span class="num-count">${item.count}</span>
+            </div>`).join('');
+    };
+    render(appData.analysis.hot_numbers, 'hot-numbers');
+    render(appData.analysis.cold_numbers, 'cold-numbers');
+}
+
+// Draws Table
+function renderDrawsTable(page = 1, search = '') {
+    currentPage = page;
+    fetch('/api/draws?' + new URLSearchParams({ page, per_page: 20, search }))
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('draws-tbody').innerHTML = data.draws.map(d => `
+                <tr>
+                    <td><span class="draw-no">${d.draw_no}</span></td>
+                    <td><span class="draw-date">${d.date}</span></td>
+                    <td>
+                        <div class="balls-row">
+                            ${d.numbers.map(n => renderBall(n, 'sm')).join('')}
+                        </div>
+                    </td>
+                    <td>${renderBall(d.bonus, 'sm', 'ball-bonus')}</td>
+                    <td><span class="prize">${formatMoney(d.prize_1st)}</span></td>
+                </tr>`).join('');
+            renderPagination(data);
+        });
+}
+
+function renderPagination(data) {
+    const { page, total_pages } = data;
+    let h = '';
+    h += `<button class="pg-btn" onclick="renderDrawsTable(${page-1})" ${page===1?'disabled':''}>&lsaquo;</button>`;
+    const s = Math.max(1, page - 2), e = Math.min(total_pages, page + 2);
+    for (let i = s; i <= e; i++)
+        h += `<button class="pg-btn ${i===page?'active':''}" onclick="renderDrawsTable(${i})">${i}</button>`;
+    h += `<span class="pg-info">${page} / ${total_pages}</span>`;
+    h += `<button class="pg-btn" onclick="renderDrawsTable(${page+1})" ${page===total_pages?'disabled':''}>&rsaquo;</button>`;
+    document.getElementById('pagination').innerHTML = h;
+}
+
+function searchDraws() { renderDrawsTable(1, document.getElementById('search-draw').value); }
+
+// Charts
+const chartColors = n => {
+    if (n <= 10) return '#ff9f0a';
+    if (n <= 20) return '#64d2ff';
+    if (n <= 30) return '#ff453a';
+    if (n <= 40) return '#bf5af2';
+    return '#30d158';
+};
+
+function renderRecentFreqChart() {
+    const ctx = document.getElementById('recentFreqChart');
+    if (charts['recent']) charts['recent'].destroy();
+    const freq = appData.analysis.recent_frequency;
+    const labels = Object.keys(freq).map(Number);
+    charts['recent'] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{ data: Object.values(freq), backgroundColor: labels.map(n => chartColors(n) + 'aa'), borderRadius: 3 }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } } }
+        }
+    });
+}
+
+function renderRangeChart() {
+    const ctx = document.getElementById('rangeChart');
+    if (charts['range']) charts['range'].destroy();
+    const r = appData.analysis.range_analysis;
+    charts['range'] = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(r),
+            datasets: [{ data: Object.values(r), backgroundColor: ['#ff9f0a','#64d2ff','#ff453a','#bf5af2','#30d158'], borderWidth: 0 }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, cutout: '65%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } },
+                tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed}%` } }
+            }
+        }
+    });
+}
+
+// Odd/Even
+function renderOddEven() {
+    const oe = appData.analysis.odd_even;
+    const op = ((oe.avg_odd/6)*100).toFixed(1), ep = ((oe.avg_even/6)*100).toFixed(1);
+    const tags = oe.combos.slice(0,6).map(c =>
+        `<span class="tag">${c.combo.replace(':','홀 ')}짝 &middot; ${c.count}회</span>`).join('');
+    document.getElementById('odd-even-stats').innerHTML = `
+        <div style="margin-bottom:16px;">
+            <div style="font-size:14px;margin-bottom:8px;">평균 홀 <strong>${oe.avg_odd}</strong> / 짝 <strong>${oe.avg_even}</strong></div>
+            <div class="bar-track">
+                <div class="bar-seg bar-odd" style="width:${op}%">${op}%</div>
+                <div class="bar-seg bar-even" style="width:${ep}%">${ep}%</div>
+            </div>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:8px;">조합별 빈도</div>
+        ${tags}`;
+}
+
+// Consecutive
+function renderConsecutive() {
+    const c = appData.analysis.consecutive;
+    document.getElementById('consecutive-stats').innerHTML = `
+        <div class="stat-block">
+            <div class="stat-num">${c.percentage}%</div>
+            <div class="stat-label">연속번호 포함 비율</div>
+            <div style="font-size:13px;color:var(--text-2);margin-top:12px;">
+                ${c.total_draws}회 중 ${c.consecutive_draws}회
+            </div>
+        </div>`;
+}
+
+// Sum
+function renderSumStats() {
+    const s = appData.analysis.sum_stats;
+    document.getElementById('sum-stats').innerHTML = `
+        <div class="stat-block">
+            <div class="stat-num">${s.avg}</div>
+            <div class="stat-label">6개 번호 합계 평균</div>
+            <div style="display:flex;justify-content:center;gap:24px;margin-top:12px;font-size:13px;color:var(--text-2);">
+                <span>최소 ${s.min}</span>
+                <span>최대 ${s.max}</span>
+                <span>표준편차 ${s.std}</span>
+            </div>
+        </div>`;
+}
+
+// Predictions
+function getSundayKey() {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = day === 0 ? 0 : 7 - day;
+    const sun = new Date(now);
+    sun.setDate(now.getDate() + diff);
+    return sun.toISOString().split('T')[0];
+}
+
+function loadOrCreatePredictions() {
+    const nextDraw = appData.analysis.latest_draw.draw_no + 1;
+    const key = getSundayKey();
+    const stored = localStorage.getItem('lotto_predictions');
+    if (stored) {
+        const p = JSON.parse(stored);
+        if (p.week === key) { renderPredictions(p.predictions, p.draw_no || nextDraw); return; }
+    }
+    fetch('/api/predict').then(r => r.json()).then(data => {
+        localStorage.setItem('lotto_predictions', JSON.stringify({ week: key, draw_no: nextDraw, predictions: data.predictions }));
+        renderPredictions(data.predictions, nextDraw);
+    });
+}
+
+function renderPredictions(predictions, nextDraw) {
+    document.getElementById('prediction-sets').innerHTML =
+        `<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:16px;">제 ${nextDraw}회</div>` +
+        predictions.map((pred, i) => `
+            <div class="pred-row">
+                <span class="pred-label">SET ${i+1}</span>
+                <div class="balls-row">${pred.map(n => renderBall(n)).join('')}</div>
+            </div>`).join('');
+}
+
+// Checker
+function renderCheckerInfo() {
+    const draws = appData.draws;
+    const latest = draws[draws.length - 1];
+    document.getElementById('checker-latest-info').innerHTML =
+        `<span>제 ${latest.draw_no}회</span><span>${latest.date}</span>`;
+}
+
+function clearChecker() {
+    for (let i = 1; i <= 6; i++) document.getElementById('cn' + i).value = '';
+    document.getElementById('checker-result').style.display = 'none';
+}
+
+// 입력칸 자동 이동
+document.querySelectorAll('.checker-num').forEach((input, idx) => {
+    input.addEventListener('input', () => {
+        let v = parseInt(input.value);
+        if (v > 45) input.value = 45;
+        if (v < 1 && input.value !== '') input.value = 1;
+        if (input.value.length >= 2 && idx < 5) {
+            document.getElementById('cn' + (idx + 2)).focus();
+        }
+    });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (idx < 5) document.getElementById('cn' + (idx + 2)).focus();
+            else checkMyNumbers();
+        }
+    });
+});
+
+function checkMyNumbers() {
+    if (!appData) return;
+    const myNums = [];
+    for (let i = 1; i <= 6; i++) {
+        const v = parseInt(document.getElementById('cn' + i).value);
+        if (isNaN(v) || v < 1 || v > 45) {
+            document.getElementById('cn' + i).focus();
+            document.getElementById('cn' + i).classList.add('checker-num-error');
+            setTimeout(() => document.getElementById('cn' + i).classList.remove('checker-num-error'), 800);
+            return;
+        }
+        if (myNums.includes(v)) {
+            document.getElementById('cn' + i).focus();
+            document.getElementById('cn' + i).classList.add('checker-num-error');
+            setTimeout(() => document.getElementById('cn' + i).classList.remove('checker-num-error'), 800);
+            return;
+        }
+        myNums.push(v);
+    }
+
+    const draws = appData.draws;
+    const latest = draws[draws.length - 1];
+    const matched = myNums.filter(n => latest.numbers.includes(n));
+    const bonusMatch = myNums.includes(latest.bonus);
+
+    let rank = 0;
+    if (matched.length === 6) rank = 1;
+    else if (matched.length === 5 && bonusMatch) rank = 2;
+    else if (matched.length === 5) rank = 3;
+    else if (matched.length === 4) rank = 4;
+    else if (matched.length === 3) rank = 5;
+
+    const rankNames = { 1: '1등', 2: '2등', 3: '3등', 4: '4등', 5: '5등' };
+    const rankColors = { 1: '#ff3b30', 2: '#ff9f0a', 3: '#af52de', 4: '#0071e3', 5: '#34c759' };
+
+    const resultDiv = document.getElementById('checker-result');
+    resultDiv.style.display = 'block';
+    const summaryDiv = document.getElementById('checker-summary');
+
+    // 당첨번호 표시 (일치하면 밝게, 불일치하면 흐리게)
+    const drawBalls = latest.numbers.map(n => {
+        const isMatch = matched.includes(n);
+        return `<span class="ball ${getBallClass(n)} ${isMatch ? '' : 'ball-dim'}">${n}</span>`;
+    }).join('');
+    const bonusBall = `<span class="ball ${getBallClass(latest.bonus)} ${bonusMatch ? '' : 'ball-dim'} ball-bonus">${latest.bonus}</span>`;
+
+    const drawSection = `
+        <div class="checker-draw-row">
+            <div class="checker-draw-label">제 ${latest.draw_no}회 당첨번호</div>
+            <div class="balls-row" style="justify-content:center;gap:10px;">
+                ${drawBalls}
+                <span class="balls-divider"></span>
+                ${bonusBall}
+            </div>
+        </div>`;
+
+    if (rank === 0) {
+        summaryDiv.innerHTML = `
+            <div class="checker-result-hero">
+                <div class="checker-my-balls">${myNums.map(n => renderBall(n, 'lg')).join('')}</div>
+                <div class="checker-result-msg">낙첨</div>
+                <div class="checker-result-sub">${latest.date} 추첨 / 일치번호 ${matched.length}개</div>
+                ${drawSection}
+            </div>`;
+    } else {
+        summaryDiv.innerHTML = `
+            <div class="checker-result-hero">
+                <div class="checker-my-balls">${myNums.map(n => renderBall(n, 'lg')).join('')}</div>
+                <div class="checker-result-rank" style="color:${rankColors[rank]}">${rankNames[rank]}</div>
+                <div class="checker-result-sub">${latest.date} 추첨 / 일치번호 ${matched.length}개${bonusMatch ? ' + 보너스' : ''}</div>
+                ${drawSection}
+            </div>`;
+    }
+
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Refresh
+async function refreshData(e) {
+    const btn = e.target;
+    btn.textContent = '갱신 중...';
+    btn.disabled = true;
+    await fetch('/api/refresh');
+    await loadData();
+    btn.textContent = '데이터 갱신';
+    btn.disabled = false;
+    // 탭 UI도 당첨번호로 전환
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector('.tab-item[data-tab="checker"]').classList.add('active');
+    document.getElementById('tab-checker').classList.add('active');
+}
+
+loadData();
+</script>
+</body>
+</html>

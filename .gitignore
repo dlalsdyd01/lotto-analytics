@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+*.log
+lotto_cache.json
+.DS_Store
+.claude/
+temp/
