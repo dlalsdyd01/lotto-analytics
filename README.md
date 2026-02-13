@@ -78,141 +78,12 @@ python app.py
 
 ---
 
-## 📡 API 엔드포인트
-
-### `GET /api/status`
-데이터 수집 상태 확인
-```json
-{
-  "ready": true,
-  "cached_count": 1145,
-  "fetching": false,
-  "progress": 100,
-  "total": 100
-}
-```
-
-### `GET /api/data`
-전체 당첨 데이터 + 분석 결과
-```json
-{
-  "draws": [...],
-  "analysis": {
-    "total_draws": 1145,
-    "frequency": {...},
-    "hot_numbers": [...],
-    "cold_numbers": [...],
-    "predictions": [...]
-  }
-}
-```
-
-### `GET /api/draws?page=1&per_page=20&search=114`
-당첨번호 목록 (페이지네이션 지원)
-
-### `GET /api/predict`
-새로운 예측 번호 5세트 생성
-```json
-{
-  "next_draw": 1146,
-  "predictions": [
-    [3, 12, 21, 28, 35, 42],
-    [7, 15, 23, 31, 38, 44],
-    ...
-  ]
-}
-```
-
-### `GET /api/refresh`
-최신 데이터 수동 갱신
-
----
-
-## 📊 분석 알고리즘
-
-### 번호 예측 로직
-```python
-# 각 번호의 가중치 계산
-weight = (전체_빈도 × 0.3) + (최근_빈도 × 0.4) + (구간_균형 × 0.2) + (랜덤성 × 0.1)
-
-# 구간별 균형 제약
-- 1~40 구간: 각 구간당 최대 3개
-- 41~45 구간: 최대 2개
-```
 
 ### 통계적 근거
 - 로또는 완전 무작위지만, 과거 데이터의 통계적 패턴을 참고
 - 극단적 편중을 피하고 균형잡힌 번호 조합 생성
 - 매 예측마다 랜덤성을 추가하여 다양한 조합 생성
 
----
-
-## 🌐 배포 (Render)
-
-### 자동 배포 설정
-이 프로젝트는 Render에 즉시 배포할 수 있도록 설정되어 있습니다.
-
-1. [Render](https://render.com) 계정 생성
-2. "New Web Service" 클릭
-3. GitHub 저장소 연결
-4. Render가 `render.yaml` 자동 감지
-5. "Create Web Service" 클릭
-
-### render.yaml 설정
-```yaml
-services:
-  - type: web
-    name: lottoanalytics
-    env: python
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-```
-
-### 무료 플랜 제약사항
-- 15분간 트래픽 없으면 서버 sleep (재시작 시 1분 소요)
-- 월 100GB 대역폭, 500분 빌드 시간
-- PostgreSQL 30일 후 만료 (이 프로젝트는 DB 불필요)
-
-💡 **Tip**: [UptimeRobot](https://uptimerobot.com)으로 15분마다 ping 전송 시 sleep 방지 가능
-
----
-
-## 📁 프로젝트 구조
-
-```
-lotto-analytics/
-├── app.py              # Flask 메인 애플리케이션
-├── lotto_data.py       # 데이터 수집 및 캐싱
-├── analysis.py         # 통계 분석 및 예측 알고리즘
-├── lotto_cache.json    # 로컬 데이터 캐시
-├── requirements.txt    # Python 의존성
-├── render.yaml         # Render 배포 설정
-├── templates/          # HTML 템플릿
-│   └── index.html
-└── static/             # CSS, JS, 이미지
-    ├── css/
-    ├── js/
-    └── img/
-```
-
----
-
-## 🤝 기여하기
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📝 라이선스
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## ⚠️ 면책 조항
 
@@ -223,18 +94,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 책임감 있는 구매를 권장합니다.
 
 ---
-
 ## 👨‍💻 개발자
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [MinyongLee]
 
 [![GitHub](https://img.shields.io/badge/GitHub-Profile-black?logo=github)](https://github.com/yourusername)
 [![Email](https://img.shields.io/badge/Email-Contact-red?logo=gmail)](mailto:your.email@example.com)
 
 ---
-
-## 🙏 감사의 말
-
-- [smok95](https://github.com/smok95) - 로또 데이터 API 제공
-- [동행복권](https://www.dhlottery.co.kr/) - 공식 당첨번호 데이터
-- Flask, Pandas, NumPy 커뮤니티
