@@ -18,7 +18,16 @@
     --shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 스크롤 개선 (모바일) */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
 
 body {
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -27,6 +36,8 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* iOS 확대 방지 */
+    touch-action: manipulation;
 }
 
 /* ── Layout Wrapper (사이드바 + 메인) ── */
@@ -54,13 +65,26 @@ body {
     justify-self: end;
 }
 
-/* 모바일에서는 사이드바 숨김 */
+/* 타블렛/모바일에서는 사이드바 숨김 */
 @media (max-width: 1200px) {
     .sidebar-ad {
         display: none;
     }
     .layout-wrapper {
         grid-template-columns: 1fr;
+        padding: 0 16px;
+    }
+}
+
+/* 타블렛 최적화 */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding: 20px;
+    }
+    .g2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 }
 
@@ -682,28 +706,81 @@ body {
 }
 
 /* ── Responsive ── */
+/* 모바일 최적화 */
 @media (max-width: 768px) {
     .g2, .g3 { grid-template-columns: 1fr; }
     .container { padding: 16px; }
+    .layout-wrapper { padding: 0 12px; }
     .header-inner { padding: 0 16px; }
-    .tab-bar { padding: 0 16px; }
-    .tab-item { padding: 10px 12px; font-size: 13px; }
-    .ball { width: 34px; height: 34px; font-size: 13px; }
-    .ball-lg { width: 42px; height: 42px; font-size: 15px; }
+    .tab-bar {
+        padding: 0 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tab-item {
+        padding: 12px 16px;
+        font-size: 14px;
+        min-height: 44px; /* 터치 타겟 최소 크기 */
+    }
+    .ball { width: 36px; height: 36px; font-size: 14px; }
+    .ball-lg { width: 44px; height: 44px; font-size: 16px; }
     .search { width: 100%; }
-    .pred-card { padding: 24px; border-radius: 16px; }
-    .checker-hero { padding: 36px 16px 32px; border-radius: 18px; }
-    .checker-title { font-size: 24px; }
-    .checker-subtitle { margin-bottom: 32px; }
-    .checker-num { width: 46px; height: 46px; font-size: 16px; }
-    .checker-balls-input { gap: 8px; }
-    .checker-btn { height: 46px; padding: 0 28px; font-size: 14px; }
-    .checker-quick-btn { height: 46px; padding: 0 20px; font-size: 13px; }
+    .pred-card { padding: 24px 20px; border-radius: 16px; }
+    .checker-hero { padding: 36px 20px 32px; border-radius: 18px; }
+    .checker-title { font-size: 26px; }
+    .checker-subtitle { margin-bottom: 28px; font-size: 14px; }
+    .checker-num {
+        width: 48px;
+        height: 48px;
+        font-size: 17px;
+        min-height: 44px; /* 터치 타겟 */
+    }
+    .checker-balls-input { gap: 8px; justify-content: center; }
+    .checker-btn {
+        height: 48px;
+        padding: 0 32px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+    .checker-quick-btn {
+        height: 48px;
+        padding: 0 24px;
+        font-size: 14px;
+        min-height: 44px;
+    }
     .checker-result-card { padding: 28px 20px; border-radius: 16px; }
-    .checker-result-rank { font-size: 44px; }
-    .share-section { padding: 20px; margin-top: 16px; }
-    .share-buttons { flex-direction: column; gap: 10px; }
-    .share-btn { padding: 12px 20px; font-size: 14px; }
+    .checker-result-rank { font-size: 48px; }
+    .share-section { padding: 20px; margin-top: 20px; }
+    .share-buttons { flex-direction: column; gap: 12px; }
+    .share-btn {
+        padding: 14px 20px;
+        font-size: 15px;
+        min-height: 44px;
+        width: 100%;
+    }
+
+    /* 테이블 스크롤 개선 */
+    [style*="overflow-x"] {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    /* 카드 간격 조정 */
+    .card {
+        margin-bottom: 16px;
+    }
+}
+
+/* 작은 모바일 (360px 이하) */
+@media (max-width: 480px) {
+    .checker-title { font-size: 22px; }
+    .checker-num { width: 44px; height: 44px; font-size: 16px; }
+    .checker-balls-input { gap: 6px; }
+    .ball { width: 32px; height: 32px; font-size: 13px; }
+    .ball-lg { width: 40px; height: 40px; font-size: 15px; }
+    .layout-wrapper { padding: 0 8px; }
+    .container { padding: 12px; }
+    .tab-item { font-size: 13px; padding: 10px 12px; }
 }
 
 /* ── Share Section ── */
