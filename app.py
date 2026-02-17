@@ -12,7 +12,7 @@ _data_ready = threading.Event()
 
 def _bg_fetch():
     print('데이터 수집 시작...')
-    draws = get_draws()
+    draws = fetch_all_draws()
     print(f'총 {len(draws)}회차 데이터 로드 완료!')
     _data_ready.set()
 
