@@ -172,20 +172,6 @@ body {
     gap: 4px;
 }
 
-.dark-toggle {
-    font-size: 18px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 6px;
-    color: var(--text-2);
-    transition: background 0.2s;
-    font-family: inherit;
-}
-
-.dark-toggle:hover { background: rgba(0,0,0,0.05); }
-
 /* ── Tab Bar ── */
 .tab-bar-wrap {
     background: rgba(11,13,20,0.75);
@@ -451,8 +437,8 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-.pg-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
-.pg-btn.active { background: var(--text); color: white; }
+.pg-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.pg-btn.active { background: rgba(255,255,255,0.9); color: #0b0d14; font-weight: 700; }
 .pg-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
 
 .pg-info {
