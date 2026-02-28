@@ -81,22 +81,7 @@
     window.addEventListener('scroll',()=>{btn.classList.toggle('show',window.scrollY>400);});
 })();
 
-// 다크모드
-function toggleDark(){
-    const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
-    document.documentElement.setAttribute('data-theme',t);
-    localStorage.setItem('theme',t);
-    const btn=document.querySelector('.dark-toggle');
-    if(btn)btn.innerHTML=t==='dark'?'&#9788;':'&#9790;';
-}
-(function(){
-    const saved=localStorage.getItem('theme');
-    if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
-        document.documentElement.setAttribute('data-theme','dark');
-        const btn=document.querySelector('.dark-toggle');
-        if(btn)btn.innerHTML='&#9788;';
-    }
-})();
+
 </script>
 
 {% block scripts %}{% endblock %}
@@ -129,14 +114,9 @@ function toggleDark(){
         }
     }
 
-    function isDark(){
-        return document.documentElement.getAttribute('data-theme')==='dark';
-    }
-
     function draw(){
         ctx.clearRect(0,0,w,h);
-        const dark=isDark();
-        const dotColor=dark?'rgba(129,140,248,1)':'rgba(129,140,248,0.9)';
+        const dotColor='rgba(129,140,248,0.9)';
         const lr=129,lg=140,lb=248;
 
         // update positions

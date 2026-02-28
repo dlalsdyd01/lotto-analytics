@@ -305,8 +305,11 @@ body {
 /* ── Number Grid (Hot/Cold) ── */
 .num-grid {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
 }
 
 .num-item {
@@ -2520,48 +2523,3 @@ body {
 }
 
 /* ── 다크모드 ── */
-[data-theme="dark"] {
-    --bg: #060810;
-    --card: rgba(255,255,255,0.04);
-    --text: #f0f0f5;
-    --text-2: #7a7a8e;
-    --text-3: #4a4a5e;
-    --border: rgba(255,255,255,0.06);
-    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
-    --shadow-hover: 0 2px 8px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4);
-}
-
-
-[data-theme="dark"] .header {
-    background: rgba(26,26,26,0.85);
-}
-
-[data-theme="dark"] .tab-bar-wrap {
-    background: rgba(26,26,26,0.85);
-}
-
-[data-theme="dark"] .checker-hero {
-    background: linear-gradient(135deg, #1a2a44, #0f1a2e);
-}
-
-[data-theme="dark"] .pred-card {
-    background: linear-gradient(135deg, #1a2a44, #0f1a2e);
-}
-
-[data-theme="dark"] .sim-hero {
-    background: linear-gradient(135deg, #1a2a44, #0f1a2e);
-}
-
-[data-theme="dark"] .draw-hero {
-    background: linear-gradient(135deg, #1a2a44, #0f1a2e);
-}
-
-[data-theme="dark"] .dark-toggle:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-[data-theme="dark"] .header-btn:hover {
-    background: rgba(255,255,255,0.08);
-}
-
-[data-theme="dark"] img { opacity: 0.9; }
