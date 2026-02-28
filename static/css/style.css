@@ -30,16 +30,22 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
     min-height: 100vh;
     overflow-x: hidden;
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 /* ── 기하학 메쉬 배경 캔버스 ── */
@@ -51,7 +57,7 @@ body {
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    opacity: 1;
+    opacity: 0.35;
 }
 
 /* ── Layout Wrapper (사이드바 + 메인) ── */
@@ -124,9 +130,7 @@ body {
 
 /* ── Header ── */
 .header {
-    background: rgba(11,13,20,0.75);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: #0b0d14;
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
@@ -174,9 +178,7 @@ body {
 
 /* ── Tab Bar ── */
 .tab-bar-wrap {
-    background: rgba(11,13,20,0.75);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: #0b0d14;
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 52px;
@@ -234,6 +236,7 @@ body {
     margin-bottom: 16px;
     box-shadow: var(--shadow);
     transition: box-shadow 0.3s;
+    border: 1px solid var(--border);
 }
 
 .card-header {
@@ -276,9 +279,8 @@ body {
 .balls-row {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    flex: 1;
+    gap: 3px;
+    flex-wrap: nowrap;
 }
 
 .balls-divider {
@@ -312,9 +314,18 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
+/* ── Table Scroll Wrapper ── */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.table-scroll::-webkit-scrollbar { display: none; }
+
 /* ── Table ── */
 .tbl {
     width: 100%;
+    min-width: 480px;
     border-collapse: separate;
     border-spacing: 0;
 }
@@ -498,6 +509,7 @@ body {
 .pred-row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     padding: 14px 16px;
     background: rgba(255,255,255,0.06);
@@ -506,6 +518,7 @@ body {
 }
 
 .pred-row:last-child { margin-bottom: 0; }
+.pred-row .balls-row { gap: 8px; }
 
 .pred-label {
     font-size: 12px;
@@ -516,10 +529,11 @@ body {
 }
 
 .pred-desc {
-    font-size: 14px;
-    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
     line-height: 1.7;
     margin-bottom: 24px;
+    text-align: center;
 }
 
 .info-card {
@@ -612,7 +626,25 @@ body {
 .checker-subtitle {
     font-size: 15px;
     color: rgba(255,255,255,0.4);
-    margin-bottom: 44px;
+    margin-bottom: 16px;
+}
+
+.buy-lotto-btn {
+    display: inline-block;
+    margin-bottom: 28px;
+    padding: 10px 24px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.buy-lotto-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(99,102,241,0.4);
 }
 
 .checker-input-wrap {
@@ -713,6 +745,25 @@ body {
     border-color: rgba(255,255,255,0.2);
 }
 
+.checker-qr-btn {
+    height: 52px;
+    padding: 0 24px;
+    border: 1.5px solid rgba(99,102,241,0.4);
+    border-radius: 26px;
+    background: rgba(99,102,241,0.15);
+    color: rgba(129,140,248,0.9);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.checker-qr-btn:hover {
+    background: rgba(99,102,241,0.25);
+    color: #a5b4fc;
+    border-color: rgba(99,102,241,0.6);
+}
+
 /* Result */
 .checker-result-card {
     background: var(--card);
@@ -811,193 +862,140 @@ body {
 
 /* ── Responsive ── */
 /* 모바일 최적화 */
+/* ── 태블릿 (768px) ── */
 @media (max-width: 768px) {
+    .col-date { display: none; }
     .g2, .g3 { grid-template-columns: 1fr; }
-    .container { padding: 16px; }
-    .layout-wrapper { padding: 0 12px; }
-    .header-inner { padding: 0 16px; }
-    .tab-bar {
-        padding: 0 12px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    .tab-item {
-        padding: 12px 16px;
-        font-size: 14px;
-        min-height: 44px; /* 터치 타겟 최소 크기 */
-    }
-    .ball { width: 36px; height: 36px; font-size: 14px; }
-    .ball-lg { width: 44px; height: 44px; font-size: 16px; }
+    .container { padding: 14px; }
+    .layout-wrapper { padding: 0 10px; }
+    .header-inner { padding: 0 14px; height: 48px; }
+    .tab-bar-wrap { top: 48px; }
+    .logo { font-size: 16px; }
+    .tab-bar { padding: 0 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab-item { padding: 10px 14px; font-size: 13px; min-height: 44px; }
+
+    /* 볼 */
+    .ball { width: 32px; height: 32px; font-size: 13px; }
+    .ball-lg { width: 38px; height: 38px; font-size: 14px; }
+
+    /* 체커 히어로 */
+    .checker-hero { padding: 28px 16px 24px; border-radius: 16px; }
+    .checker-title { font-size: 22px; margin-bottom: 6px; }
+    .checker-subtitle { font-size: 13px; margin-bottom: 12px; }
+    .checker-latest { padding: 6px 14px; font-size: 12px; margin-bottom: 16px; }
+    .buy-lotto-btn { padding: 8px 20px; font-size: 13px; margin-bottom: 20px; }
+    .checker-num { width: 44px; height: 44px; font-size: 16px; border-width: 2px; }
+    .checker-balls-input { gap: 6px; }
+    .checker-input-wrap { gap: 16px; }
+    .checker-actions { gap: 8px; }
+    .checker-btn { height: 44px; padding: 0 24px; font-size: 14px; white-space: nowrap; }
+    .checker-quick-btn { height: 44px; padding: 0 16px; font-size: 13px; white-space: nowrap; }
+    .checker-qr-btn { height: 44px; padding: 0 16px; font-size: 13px; white-space: nowrap; }
+
+    /* 결과/공유 */
+    .checker-result-card { padding: 24px 16px; border-radius: 14px; }
+    .checker-result-rank { font-size: 42px; }
+    .share-section { padding: 16px; margin: 20px auto 0; }
+    .share-btn { padding: 10px 6px; font-size: 12px; }
+
+    /* 카드 */
+    .card { margin-bottom: 12px; padding: 16px; }
+    .card-header { font-size: 16px; margin-bottom: 12px; }
     .search { width: 100%; }
-    .pred-card { padding: 24px 20px; border-radius: 16px; }
-    .checker-hero { padding: 36px 20px 32px; border-radius: 18px; }
-    .checker-title { font-size: 26px; }
-    .checker-subtitle { margin-bottom: 28px; font-size: 14px; }
-    .checker-num {
-        width: 48px;
-        height: 48px;
-        font-size: 17px;
-        min-height: 44px; /* 터치 타겟 */
-    }
-    .checker-balls-input { gap: 8px; justify-content: center; }
-    .checker-btn {
-        height: 48px;
-        padding: 0 32px;
-        font-size: 15px;
-        min-height: 44px;
-    }
-    .checker-quick-btn {
-        height: 48px;
-        padding: 0 24px;
-        font-size: 14px;
-        min-height: 44px;
-    }
-    .checker-result-card { padding: 28px 20px; border-radius: 16px; }
-    .checker-result-rank { font-size: 48px; }
-    .share-section {
-        padding: 24px 20px;
-        margin: 24px auto 0;
-        max-width: 100%;
-    }
-    .share-title {
-        font-size: 18px;
-        margin-bottom: 20px;
-    }
-    .share-buttons { flex-direction: column; gap: 12px; }
-    .share-btn {
-        padding: 14px 20px;
-        font-size: 15px;
-        min-height: 44px;
-        width: 100%;
-    }
+    .pred-card { padding: 16px 10px; border-radius: 14px; text-align: center; }
+    .pred-desc { font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
+    .pred-row { padding: 10px 8px; gap: 6px; }
+    .pred-row .balls-row { gap: 3px; }
+    .pred-row .ball { width: 28px; height: 28px; font-size: 11px; }
+    .pred-label { min-width: 36px; font-size: 11px; }
 
-    /* 테이블 스크롤 개선 */
-    [style*="overflow-x"] {
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-    }
+    /* 테이블 */
+    .tbl { font-size: 12px; min-width: 0; width: 100%; }
+    .table-scroll { overflow-x: visible; }
+    .tbl th { font-size: 11px; padding: 8px 4px; white-space: nowrap; }
+    .tbl td { padding: 10px 4px; }
+    .balls-row .ball { width: 26px; height: 26px; font-size: 10px; flex-shrink: 0; }
 
-    /* 카드 간격 조정 */
-    .card {
-        margin-bottom: 16px;
-    }
-
-    /* === 1번: 예측 탭 개선 === */
-    .pred-card {
-        text-align: center;
-    }
-    .pred-desc {
-        font-size: 13px;
-        line-height: 1.6;
-        margin-bottom: 24px;
-    }
-    .card-header {
-        font-size: 18px;
-        margin-bottom: 16px;
-    }
-
-    /* === 2번: 당첨번호 테이블 개선 === */
-    .tbl {
-        font-size: 13px;
-    }
-    .tbl th {
-        font-size: 12px;
-        padding: 10px 6px;
-    }
-    .tbl td {
-        padding: 12px 6px;
-    }
-
-    /* === 3번: 통계 탭 - 번호 그리드 한 줄로 === */
-    .num-grid {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px;
-        gap: 8px;
-    }
-    .num-item {
-        flex-shrink: 0;
-    }
-    .num-grid .ball {
-        width: 34px;
-        height: 34px;
-        font-size: 13px;
-    }
+    /* 통계 번호 그리드 */
+    .num-grid { overflow-x: visible; flex-wrap: wrap; justify-content: center; padding-bottom: 6px; gap: 8px; }
+    .num-item { flex-shrink: 0; }
+    .num-grid .ball { width: 30px; height: 30px; font-size: 12px; }
 }
 
-/* 작은 모바일 (480px 이하) */
+/* ── 작은 모바일 (480px) ── */
 @media (max-width: 480px) {
-    .checker-title { font-size: 22px; }
-    .checker-num { width: 44px; height: 44px; font-size: 16px; }
-    .checker-balls-input { gap: 6px; }
-    .ball { width: 32px; height: 32px; font-size: 13px; }
-    .ball-lg { width: 40px; height: 40px; font-size: 15px; }
-    .layout-wrapper { padding: 0 8px; }
-    .container { padding: 12px; }
-    .tab-item { font-size: 13px; padding: 10px 12px; }
+    .container { padding: 10px; }
+    .layout-wrapper { padding: 0 6px; }
+    .tab-item { font-size: 12px; padding: 10px 10px; }
 
-    /* 작은 화면에서 번호 더 작게 */
-    .num-grid {
-        gap: 6px;
-    }
-    .num-grid .ball {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
-    }
+    .checker-hero { padding: 24px 14px 20px; }
+    .checker-title { font-size: 20px; }
+    .checker-num { width: 40px; height: 40px; font-size: 15px; }
+    .checker-balls-input { gap: 5px; }
+    .checker-btn { height: 42px; padding: 0 20px; font-size: 13px; }
+    .checker-quick-btn { height: 42px; padding: 0 14px; font-size: 12px; }
+    .checker-qr-btn { height: 42px; padding: 0 14px; font-size: 12px; }
 
-    /* 테이블 더 압축 */
-    .tbl th, .tbl td {
-        padding: 8px 4px;
-    }
+    .ball { width: 28px; height: 28px; font-size: 11px; }
+    .ball-lg { width: 34px; height: 34px; font-size: 13px; }
+    .balls-row .ball { width: 24px; height: 24px; font-size: 10px; flex-shrink: 0; }
+    .balls-row { gap: 2px; }
 
-    /* 예측 카드 */
-    .pred-desc {
-        font-size: 12px;
-    }
+    .tbl th, .tbl td { padding: 6px 3px; }
+    .tbl { font-size: 11px; min-width: 0; }
+
+    .num-grid { gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .num-grid .ball { width: 28px; height: 28px; font-size: 11px; }
+
+    .card { padding: 14px; }
+    .card-header { font-size: 15px; }
+    .pred-desc { font-size: 12px; }
+    .pred-card { padding: 14px 8px; }
+    .pred-row { padding: 8px 6px; gap: 4px; }
+    .pred-row .balls-row { gap: 2px; }
+    .pred-row .ball { width: 26px; height: 26px; font-size: 10px; }
+    .pred-label { min-width: 32px; font-size: 10px; }
 }
 
 /* ── Share Section ── */
 .share-section {
-    margin: 32px auto 0;
-    padding: 32px;
-    background: linear-gradient(135deg, rgba(0,113,227,0.08) 0%, rgba(175,82,222,0.08) 100%);
-    border-radius: var(--radius);
-    border: 2px solid var(--accent);
-    box-shadow: 0 4px 20px rgba(0,113,227,0.08);
-    max-width: 600px;
+    margin: 28px auto 0;
+    padding: 24px;
+    max-width: 100%;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    border: 1px solid var(--border);
 }
 
 .share-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 16px;
     text-align: center;
-    letter-spacing: -0.4px;
 }
 
 .share-buttons {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .share-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 14px 24px;
+    justify-content: center;
+    gap: 6px;
+    flex: 1;
+    padding: 12px 8px;
     border: none;
-    border-radius: 12px;
-    font-size: 15px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s;
+    transition: all 0.2s;
     font-family: inherit;
-    letter-spacing: -0.2px;
+    white-space: nowrap;
 }
 
 .share-kakao {
@@ -1007,37 +1005,32 @@ body {
 
 .share-kakao:hover {
     background: #FDD835;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(254,229,0,0.4);
+    box-shadow: 0 4px 12px rgba(254,229,0,0.3);
 }
 
 .share-url {
-    background: var(--card);
+    background: rgba(255,255,255,0.08);
     color: var(--text);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border);
 }
 
 .share-url:hover {
-    background: var(--bg);
     border-color: var(--accent);
     color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
 }
 
 .share-twitter {
-    background: #1DA1F2;
+    background: #000;
     color: white;
 }
 
 .share-twitter:hover {
-    background: #1991DA;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(29,161,242,0.4);
+    background: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(255,255,255,0.1);
 }
 
 .share-btn:active {
-    transform: translateY(0) scale(0.97);
+    transform: scale(0.96);
 }
 
 .share-result {
@@ -1072,6 +1065,8 @@ body {
     border-radius: var(--radius-sm);
     overflow: hidden;
     border: 1px solid var(--border);
+    z-index: 1;
+    position: relative;
 }
 
 .store-summary {
@@ -1507,16 +1502,18 @@ body {
 .footer-links {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 12px 20px;
     margin-bottom: 12px;
     flex-wrap: wrap;
+    padding: 0 16px;
 }
 
 .footer-links a {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-2);
     text-decoration: none;
     transition: color 0.2s;
+    white-space: nowrap;
 }
 
 .footer-links a:hover {
@@ -1524,9 +1521,11 @@ body {
 }
 
 .page-footer p {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-3);
     line-height: 1.6;
+    padding: 0 16px;
+    word-break: keep-all;
 }
 
 /* ── 시뮬레이터 ── */
@@ -2468,31 +2467,6 @@ body {
     transition: box-shadow 0.3s, transform 0.3s;
 }
 
-/* 공유 버튼 빛나는 테두리 */
-.share-section {
-    position: relative;
-    overflow: hidden;
-}
-
-.share-section::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--accent), #af52de, var(--accent), #30d158, var(--accent));
-    background-size: 400% 400%;
-    animation: borderGlow 6s ease infinite;
-    border-radius: calc(var(--radius) + 2px);
-    z-index: -1;
-}
-
-@keyframes borderGlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 
 /* 페이지 로딩 스피너 개선 */
 .spinner {

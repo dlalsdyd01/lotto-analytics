@@ -396,7 +396,7 @@ def contact():
 
     <div style="background:var(--bg);padding:20px;border-radius:var(--radius-sm);margin:20px 0;">
         <p style="margin-bottom:8px;"><strong>이메일</strong></p>
-        <p style="color:var(--accent);font-size:16px;">contact@lottoanalytics.co.kr</p>
+        <p style="color:var(--accent);font-size:16px;"><a href="mailto:kv0435029@naver.com" style="color:var(--accent);text-decoration:none;">kv0435029@naver.com</a></p>
     </div>
 
     <div style="background:var(--bg);padding:20px;border-radius:var(--radius-sm);margin:20px 0;">

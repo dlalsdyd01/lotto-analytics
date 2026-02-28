@@ -65,6 +65,7 @@
             <div class="checker-latest" id="checker-latest-info"></div>
             <div class="checker-title">내 번호 확인하기</div>
             <div class="checker-subtitle">번호 6개를 입력하고 최신 회차 당첨 여부를 확인하세요</div>
+            <a href="https://dhlottery.co.kr" target="_blank" rel="noopener" class="buy-lotto-btn">로또 구매하러 가기 &rarr;</a>
 
             <div class="checker-input-wrap">
                 <div class="checker-balls-input" id="checker-balls">
@@ -78,7 +79,14 @@
                 <div class="checker-actions">
                     <button class="checker-btn" onclick="checkMyNumbers()">당첨 확인</button>
                     <button class="checker-quick-btn" onclick="clearChecker()">초기화</button>
+                    <button class="checker-qr-btn" onclick="toggleQrScanner()">QR 스캔</button>
                 </div>
+            </div>
+
+            <!-- QR 스캐너 -->
+            <div id="qr-section" style="display:none; margin-top:20px;">
+                <div id="qr-reader" style="width:300px;margin:0 auto;border-radius:12px;overflow:hidden;"></div>
+                <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:10px;">로또 용지의 QR코드를 카메라에 비춰주세요</p>
             </div>
         </div>
 
@@ -128,12 +136,12 @@
                     <div class="card-header" style="margin-bottom:0;">당첨 내역</div>
                     <span id="sim-match-count" style="font-size:13px;color:var(--text-2);"></span>
                 </div>
-                <div style="overflow-x:auto;">
+                <div class="table-scroll">
                     <table class="tbl" id="sim-table">
                         <thead>
                             <tr>
                                 <th>회차</th>
-                                <th>추첨일</th>
+                                <th class="col-date">추첨일</th>
                                 <th>당첨번호</th>
                                 <th>일치</th>
                                 <th>등수</th>
@@ -149,15 +157,16 @@
     <!-- 당첨번호 -->
     <div id="tab-history" class="tab-content">
         <div class="card fade-in">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-                <div class="card-header" style="margin-bottom:0;">역대 당첨번호</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:12px;">
+                <div class="card-header" style="margin-bottom:0; white-space:nowrap;">역대 당첨번호</div>
                 <input type="text" class="search" id="search-draw" placeholder="회차 검색" oninput="searchDraws()">
             </div>
+            <div class="table-scroll">
             <table class="tbl">
                 <thead>
                     <tr>
                         <th>회차</th>
-                        <th>추첨일</th>
+                        <th class="col-date">추첨일</th>
                         <th>당첨번호</th>
                         <th>보너스</th>
                         <th>1등 당첨금</th>
@@ -165,6 +174,7 @@
                 </thead>
                 <tbody id="draws-tbody"></tbody>
             </table>
+            </div>
             <div id="pagination" class="pager"></div>
         </div>
     </div>
@@ -216,34 +226,36 @@
         <div class="pred-card fade-in">
             <div class="card-header">통계 기반 추천 번호</div>
             <div class="pred-desc">
-                역대 당첨 데이터의 출현 빈도와 최근 트렌드를 통계적으로 분석하여 생성된 번호입니다.<br>
+                역대 당첨 데이터의 출현 빈도와 최근 트렌드를<br>
+                통계적으로 분석하여 생성된 번호입니다.<br>
                 매주 일요일에 새로운 번호로 갱신됩니다.<br>
-                추천번호는 사용자마다 다르게 생성되며, 당첨을 보장하지 않습니다.
+                추천번호는 사용자마다 다르게 생성되며,<br>
+                당첨을 보장하지 않습니다.
             </div>
             <div id="prediction-sets"></div>
 
             <!-- 공유 버튼 -->
             <div class="share-section">
-                <div class="share-title">내 예측 번호 공유하기</div>
+                <div class="share-title">공유하기</div>
                 <div class="share-buttons">
                     <button class="share-btn share-kakao" onclick="shareKakao()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 3C6.48 3 2 6.58 2 11c0 2.89 1.91 5.43 4.78 6.85-.2.72-.75 2.64-.86 3.05-.14.51.19.5.39.37.16-.11 2.52-1.68 3.46-2.31.63.09 1.28.14 1.94.14 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/>
                         </svg>
-                        카카오톡
+                        <span>카카오톡</span>
                     </button>
                     <button class="share-btn share-url" onclick="copyURL()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                         </svg>
-                        URL 복사
+                        <span>URL 복사</span>
                     </button>
                     <button class="share-btn share-twitter" onclick="shareTwitter()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
-                        트위터
+                        <span>X (트위터)</span>
                     </button>
                 </div>
                 <div id="share-result" class="share-result"></div>
@@ -286,7 +298,7 @@
                 <div class="spinner"></div>
                 <div class="loading-text">판매점 데이터 수집 중...</div>
             </div>
-            <div style="overflow-x:auto;">
+            <div class="table-scroll">
                 <table class="tbl" id="store-table">
                     <thead>
                         <tr>
@@ -633,7 +645,7 @@ function renderDrawsTable(page = 1, search = '') {
             document.getElementById('draws-tbody').innerHTML = data.draws.map(d => `
                 <tr>
                     <td><span class="draw-no">${d.draw_no}</span></td>
-                    <td><span class="draw-date">${d.date}</span></td>
+                    <td class="col-date"><span class="draw-date">${d.date}</span></td>
                     <td>
                         <div class="balls-row">
                             ${d.numbers.map(n => renderBall(n, 'sm')).join('')}
@@ -801,6 +813,43 @@ function clearChecker() {
     document.getElementById('checker-result').style.display = 'none';
 }
 
+// QR 스캐너
+let qrScanner = null;
+let qrActive = false;
+
+function toggleQrScanner() {
+    const section = document.getElementById('qr-section');
+    if (qrActive) {
+        if (qrScanner) qrScanner.stop().then(() => { qrScanner.clear(); });
+        section.style.display = 'none';
+        qrActive = false;
+        return;
+    }
+    section.style.display = 'block';
+    qrActive = true;
+    qrScanner = new Html5Qrcode("qr-reader");
+    qrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+            qrScanner.stop().then(() => { qrScanner.clear(); });
+            section.style.display = 'none';
+            qrActive = false;
+            // 동행복권 QR URL → 바로 결과 페이지로 이동
+            if (decodedText.includes('dhlottery.co.kr')) {
+                window.open(decodedText, '_blank');
+            } else {
+                alert('로또 QR코드가 아닙니다.\n다시 시도해주세요.');
+            }
+        },
+        () => {} // 스캔 실패 무시
+    ).catch((err) => {
+        section.style.display = 'none';
+        qrActive = false;
+        alert('카메라를 사용할 수 없습니다.\n카메라 권한을 허용해주세요.');
+    });
+}
+
 // 입력칸 자동 이동
 document.querySelectorAll('.checker-num').forEach((input, idx) => {
     input.addEventListener('input', () => {
@@ -937,11 +986,11 @@ function shareKakao() {
 
     const predictions = appData.analysis.predictions;
     const nextDraw = appData.analysis.latest_draw.draw_no + 1;
-    const predictionsText = predictions.slice(0, 3).map((p, i) =>
+    const predictionsText = predictions.slice(0, 5).map((p, i) =>
         `SET ${i+1}: ${p.join(', ')}`
-    ).join('\\n');
+    ).join('\n');
 
-    const shareText = `🎰 Lotto Lab 통계 분석 추천 번호\\n제 ${nextDraw}회\\n\\n${predictionsText}\\n\\n역대 데이터 기반 통계 분석`;
+    const shareText = `🎰 Lotto Lab 추천 번호 (제 ${nextDraw}회)\n\n${predictionsText}\n\n${window.location.href}`;
 
     // 카카오톡 공유 (SDK 설정 필요)
     if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
@@ -954,9 +1003,8 @@ function shareKakao() {
             }
         });
     } else {
-        // SDK 미설정 시 텍스트 복사
         navigator.clipboard.writeText(shareText).then(() => {
-            showShareResult('예측 번호가 복사되었습니다! 카카오톡에 붙여넣기하세요 📋');
+            showShareResult('추천 번호가 복사되었습니다! 붙여넣기하세요');
         }).catch(() => {
             showShareResult('복사에 실패했습니다', false);
         });
@@ -980,11 +1028,11 @@ function shareTwitter() {
 
     const predictions = appData.analysis.predictions;
     const nextDraw = appData.analysis.latest_draw.draw_no + 1;
-    const predictionsText = predictions.slice(0, 2).map((p, i) =>
+    const predictionsText = predictions.slice(0, 3).map((p, i) =>
         `SET ${i+1}: ${p.join(', ')}`
-    ).join('\\n');
+    ).join('\n');
 
-    const shareText = `🎰 Lotto Lab 통계 분석 추천 번호\\n제 ${nextDraw}회\\n${predictionsText}\\n\\n역대 데이터 기반 통계 분석`;
+    const shareText = `🎰 Lotto Lab 추천 번호 (제 ${nextDraw}회)\n${predictionsText}`;
     const url = window.location.href;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`;
 
@@ -1344,7 +1392,7 @@ function runSimulation() {
         ? matchResults.slice(0, 100).map(r => `
             <tr>
                 <td><span class="draw-no">${r.draw_no}</span></td>
-                <td><span class="draw-date">${r.date}</span></td>
+                <td class="col-date"><span class="draw-date">${r.date}</span></td>
                 <td>
                     <div class="balls-row">
                         ${r.numbers.map(n => {
