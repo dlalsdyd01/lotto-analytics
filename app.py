@@ -220,7 +220,7 @@ def draw_detail(draw_no):
 @app.route('/privacy')
 def privacy():
     content = """
-    <p style="color:var(--text-2);margin-bottom:8px;font-size:13px;">최종 수정일: 2025년 1월 1일</p>
+    <p style="color:var(--text-2);margin-bottom:8px;font-size:13px;">최종 수정일: 2026년 3월 1일</p>
     <h3 style="margin:20px 0 10px;font-size:17px;">1. 수집하는 개인정보</h3>
     <p>Lotto Lab은 서비스 이용 시 다음 정보를 자동으로 수집할 수 있습니다:</p>
     <ul><li>접속 IP 주소, 브라우저 종류, 접속 시간</li><li>Google Analytics를 통한 익명화된 이용 통계</li></ul>
@@ -255,7 +255,7 @@ def privacy():
 @app.route('/terms')
 def terms():
     content = """
-    <p style="color:var(--text-2);margin-bottom:8px;font-size:13px;">최종 수정일: 2025년 1월 1일</p>
+    <p style="color:var(--text-2);margin-bottom:8px;font-size:13px;">최종 수정일: 2026년 3월 1일</p>
     <h3 style="margin:20px 0 10px;font-size:17px;">1. 서비스 소개</h3>
     <p>Lotto Lab은 과거 로또 당첨 데이터를 분석하여 통계적 인사이트를 제공하는 웹 서비스입니다. 본 서비스는 교육 및 통계 분석 목적으로 제공됩니다.</p>
 
