@@ -136,8 +136,8 @@ function toggleDark(){
     function draw(){
         ctx.clearRect(0,0,w,h);
         const dark=isDark();
-        const dotColor=dark?'rgba(99,102,241,0.9)':'rgba(99,102,241,0.7)';
-        const lineColor=dark?'rgba(99,102,241,{a})':'rgba(99,102,241,{a})';
+        const dotColor=dark?'rgba(129,140,248,1)':'rgba(129,140,248,0.9)';
+        const lr=129,lg=140,lb=248;
 
         // update positions
         for(const p of pts){
@@ -153,10 +153,10 @@ function toggleDark(){
                 const dy=pts[i].y-pts[j].y;
                 const d=Math.sqrt(dx*dx+dy*dy);
                 if(d<DIST){
-                    const a=(1-d/DIST)*0.6;
+                    const a=(1-d/DIST)*0.8;
                     ctx.beginPath();
-                    ctx.strokeStyle=dark?`rgba(99,102,241,${a})`:`rgba(99,102,241,${a})`;
-                    ctx.lineWidth=1.2;
+                    ctx.strokeStyle=`rgba(${lr},${lg},${lb},${a})`;
+                    ctx.lineWidth=1.5;
                     ctx.moveTo(pts[i].x,pts[i].y);
                     ctx.lineTo(pts[j].x,pts[j].y);
                     ctx.stroke();
