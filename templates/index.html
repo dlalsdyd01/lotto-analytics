@@ -1,80 +1,58 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-adsense-account" content="ca-pub-3398247421662455">
-    <title>Lotto Lab - 로또 번호 분석 & AI 예측</title>
-    <meta name="description" content="과거 로또 데이터 분석과 AI 기반 번호 예측. 통계 분석으로 당첨 확률을 높여보세요!">
+{% extends "base.html" %}
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Lotto Lab - 로또 번호 분석 & AI 예측">
-    <meta property="og:description" content="과거 로또 데이터 분석과 AI 기반 번호 예측. 통계 분석으로 당첨 확률을 높여보세요!">
-    <meta property="og:url" content="https://lottoanalytics.co.kr">
-    <meta property="og:site_name" content="Lotto Lab">
+{% block title %}Lotto Lab - 로또 번호 통계 분석{% endblock %}
+{% block description %}로또 6/45 역대 당첨번호 통계 분석. 번호 출현 빈도, 홀짝 비율, 구간 분석, 회차별 상세 분석 제공.{% endblock %}
+{% block og_title %}Lotto Lab - 로또 번호 통계 분석{% endblock %}
+{% block og_desc %}로또 6/45 역대 당첨번호 통계 분석. 번호 출현 빈도, 홀짝 비율, 구간 분석 제공.{% endblock %}
+{% block tw_title %}Lotto Lab - 로또 번호 통계 분석{% endblock %}
+{% block tw_desc %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Lotto Lab - 로또 번호 분석 & AI 예측">
-    <meta name="twitter:description" content="과거 로또 데이터 분석과 AI 기반 번호 예측"">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+{% block head_extra %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3358247421662455"
-         crossorigin="anonymous"></script>
-
-    <!-- Kakao SDK -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-l+xbElFSnPZ2rOaPrU//2FF5B4LB8FiX5q4fXYTlfcG4PGpMkE1vcL7kNXI6Cci0" crossorigin="anonymous"></script>
+{% endblock %}
 
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-925QJ7TR52"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-925QJ7TR52');
-    </script>
-</head>
-<body>
-
+{% block header %}
 <header class="header">
     <div class="header-inner">
         <span class="logo">Lotto Lab</span>
-        <button class="header-btn" onclick="refreshData(event)">데이터 갱신</button>
+        <div class="header-actions">
+            <button class="dark-toggle" onclick="toggleDark()" aria-label="다크모드 전환">&#9790;</button>
+            <button class="header-btn" onclick="refreshData(event)">데이터 갱신</button>
+        </div>
     </div>
 </header>
+{% endblock %}
 
-<div style="background:rgba(255,255,255,0.72); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--border);">
+{% block body %}
+<div class="tab-bar-wrap">
     <div class="tab-bar">
         <button class="tab-item active" data-tab="checker">당첨확인</button>
         <button class="tab-item" data-tab="history">당첨번호</button>
         <button class="tab-item" data-tab="stats">통계</button>
-        <button class="tab-item" data-tab="prediction">예측</button>
+        <button class="tab-item" data-tab="prediction">추천번호</button>
+        <button class="tab-item" data-tab="stores">판매점</button>
+        <button class="tab-item" data-tab="probability">확률 교실</button>
     </div>
 </div>
 
 <div class="layout-wrapper">
     <!-- 왼쪽 사이드바 광고 -->
-    <aside class="sidebar-ad sidebar-left">
-        <!--
+    <aside class="sidebar-ad sidebar-ad-left">
         <ins class="adsbygoogle"
-             style="display:inline-block;width:160px;height:600px"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="LEFT_SIDEBAR_SLOT"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        -->
-        <div style="background:#f0f0f0; width:160px; height:600px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; text-align:center; padding:10px;">
-            왼쪽<br>사이드바<br>광고<br>(160x600)
-        </div>
+             style="display:block"
+             data-ad-client="ca-pub-3398247421662455"
+             data-ad-slot="LEFT_AD_SLOT"
+             data-ad-format="vertical"
+             data-full-width-responsive="false"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </aside>
 
-    <!-- 메인 콘텐츠 -->
     <div class="container">
 
     <div id="loading" class="loading">
@@ -107,6 +85,65 @@
 
         <div id="checker-result" class="fade-in" style="display:none;">
             <div class="checker-result-card" id="checker-summary"></div>
+        </div>
+
+        <!-- 시뮬레이터 (당첨확인 내부) -->
+        <div class="sim-hero fade-in" style="margin-top:24px;">
+            <div class="sim-title">번호 조합 시뮬레이터</div>
+            <div class="sim-subtitle">내 번호로 역대 전 회차를 돌려보세요</div>
+
+            <div class="sim-input-wrap">
+                <div class="sim-balls-input">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn1">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn2">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn3">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn4">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn5">
+                    <input type="number" class="sim-num" min="1" max="45" placeholder="?" id="sn6">
+                </div>
+                <div class="sim-actions">
+                    <button class="sim-btn" onclick="runSimulation()">시뮬레이션 시작</button>
+                    <button class="sim-quick-btn" onclick="randomSimNums()">랜덤</button>
+                    <button class="sim-quick-btn" onclick="clearSim()">초기화</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sim-result" class="fade-in" style="display:none;">
+            <div class="g2 fade-in">
+                <div class="card">
+                    <div class="card-header">시뮬레이션 결과</div>
+                    <div id="sim-summary" class="stat-block"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">수익률</div>
+                    <div id="sim-profit" class="stat-block"></div>
+                </div>
+            </div>
+            <div class="card fade-in">
+                <div class="card-header">등수별 당첨 횟수</div>
+                <div id="sim-rank-chart" class="sim-rank-bars"></div>
+            </div>
+            <div class="card fade-in">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <div class="card-header" style="margin-bottom:0;">당첨 내역</div>
+                    <span id="sim-match-count" style="font-size:13px;color:var(--text-2);"></span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="tbl" id="sim-table">
+                        <thead>
+                            <tr>
+                                <th>회차</th>
+                                <th>추첨일</th>
+                                <th>당첨번호</th>
+                                <th>일치</th>
+                                <th>등수</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sim-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -180,11 +217,11 @@
     <!-- 예측 -->
     <div id="tab-prediction" class="tab-content">
         <div class="pred-card fade-in">
-            <div class="card-header">추천 번호</div>
+            <div class="card-header">통계 기반 추천 번호</div>
             <div class="pred-desc">
-                과거 데이터의 출현 빈도와 최근 트렌드를 분석하여 생성된 번호입니다.<br>
+                역대 당첨 데이터의 출현 빈도와 최근 트렌드를 통계적으로 분석하여 생성된 번호입니다.<br>
                 매주 일요일에 새로운 번호로 갱신됩니다.<br>
-                추천번호는 사용자마다 다르게 생성됩니다.
+                추천번호는 사용자마다 다르게 생성되며, 당첨을 보장하지 않습니다.
             </div>
             <div id="prediction-sets"></div>
 
@@ -217,26 +254,289 @@
         </div>
     </div>
 
+    <!-- 판매점 지도 -->
+    <div id="tab-stores" class="tab-content">
+        <div class="card fade-in">
+            <div class="card-header">1등 배출 판매점 지도</div>
+            <div class="store-summary" id="store-summary"></div>
+            <div class="store-filter">
+                <select id="store-region-filter" onchange="filterStoresByRegion()">
+                    <option value="all">전체 지역</option>
+                    <option value="서울">서울</option>
+                    <option value="부산">부산</option>
+                    <option value="대구">대구</option>
+                    <option value="인천">인천</option>
+                    <option value="광주">광주</option>
+                    <option value="대전">대전</option>
+                    <option value="울산">울산</option>
+                    <option value="세종">세종</option>
+                    <option value="경기">경기</option>
+                    <option value="강원">강원</option>
+                    <option value="충북">충북</option>
+                    <option value="충남">충남</option>
+                    <option value="전북">전북</option>
+                    <option value="전남">전남</option>
+                    <option value="경북">경북</option>
+                    <option value="경남">경남</option>
+                    <option value="제주">제주</option>
+                </select>
+            </div>
+            <div id="store-map" class="store-map"></div>
+        </div>
+        <div class="card fade-in">
+            <div class="card-header">판매점 순위</div>
+            <div id="store-loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <div class="loading-text">판매점 데이터 수집 중...</div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="tbl" id="store-table">
+                    <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>판매점명</th>
+                            <th>1등 횟수</th>
+                            <th>주소</th>
+                        </tr>
+                    </thead>
+                    <tbody id="store-tbody"></tbody>
+                </table>
+            </div>
+            <div id="store-pagination" class="store-pagination"></div>
+        </div>
+    </div>
+
+    <!-- 확률 교실 -->
+    <div id="tab-probability" class="tab-content">
+        <div class="card fade-in">
+            <div class="card-header">등수별 당첨 확률</div>
+            <p class="prob-desc">로또 6/45는 1~45번 중 6개를 선택하고, 보너스 번호 1개가 추가로 추첨됩니다.</p>
+
+            <div class="prob-cards">
+                <div class="prob-card prob-card-1">
+                    <div class="prob-card-rank">1등</div>
+                    <div class="prob-card-match">6개 일치</div>
+                    <div class="prob-card-odds">1 / 8,145,060</div>
+                    <div class="prob-card-pct">0.0000123%</div>
+                </div>
+                <div class="prob-card prob-card-2">
+                    <div class="prob-card-rank">2등</div>
+                    <div class="prob-card-match">5개 + 보너스</div>
+                    <div class="prob-card-odds">1 / 1,357,510</div>
+                    <div class="prob-card-pct">0.0000737%</div>
+                </div>
+                <div class="prob-card prob-card-3">
+                    <div class="prob-card-rank">3등</div>
+                    <div class="prob-card-match">5개 일치</div>
+                    <div class="prob-card-odds">1 / 35,724</div>
+                    <div class="prob-card-pct">0.00280%</div>
+                </div>
+                <div class="prob-card prob-card-4">
+                    <div class="prob-card-rank">4등</div>
+                    <div class="prob-card-match">4개 일치</div>
+                    <div class="prob-card-odds">1 / 733</div>
+                    <div class="prob-card-pct">0.136%</div>
+                </div>
+                <div class="prob-card prob-card-5">
+                    <div class="prob-card-rank">5등</div>
+                    <div class="prob-card-match">3개 일치</div>
+                    <div class="prob-card-odds">1 / 45</div>
+                    <div class="prob-card-pct">2.22%</div>
+                </div>
+            </div>
+
+            <div class="prob-total-box">
+                <span>아무 등수라도 당첨될 확률</span>
+                <strong>약 1 / 42 (2.38%)</strong>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">1등 확률은 어떻게 계산할까?</div>
+            <div class="page-content">
+                <p>45개 번호 중 6개를 뽑는 조합의 수:</p>
+                <div class="prob-formula">
+                    <sub>45</sub>C<sub>6</sub> = 45! / (6! × 39!) = <strong>8,145,060</strong>가지
+                </div>
+                <p>이 중 정확히 1가지만 1등이므로 확률은 <strong>1/8,145,060</strong> 입니다.</p>
+                <p style="margin-top:16px;">2등은 보너스 번호까지 맞춰야 하므로:</p>
+                <div class="prob-formula">
+                    6가지(빠진 번호 선택) × 1(보너스) = 6가지 → <strong>1/1,357,510</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">로또 1등 vs 일상 속 확률</div>
+            <p class="prob-desc">1등 당첨 확률 1/8,145,060이 얼마나 어려운 숫자인지 비교해봅니다.</p>
+            <div class="prob-compare-list">
+                <div class="prob-compare-item">
+                    <div class="prob-compare-icon">⚡</div>
+                    <div class="prob-compare-body">
+                        <div class="prob-compare-title">벼락에 맞을 확률</div>
+                        <div class="prob-compare-odds">약 1 / 1,200,000</div>
+                        <div class="prob-compare-note">로또 1등보다 <strong>약 7배</strong> 더 쉬움</div>
+                    </div>
+                </div>
+                <div class="prob-compare-item">
+                    <div class="prob-compare-icon">🌠</div>
+                    <div class="prob-compare-body">
+                        <div class="prob-compare-title">유성에 맞을 확률</div>
+                        <div class="prob-compare-odds">약 1 / 1,600,000</div>
+                        <div class="prob-compare-note">로또 1등보다 <strong>약 5배</strong> 더 쉬움</div>
+                    </div>
+                </div>
+                <div class="prob-compare-item">
+                    <div class="prob-compare-icon">🎯</div>
+                    <div class="prob-compare-body">
+                        <div class="prob-compare-title">동전 23번 연속 앞면</div>
+                        <div class="prob-compare-odds">약 1 / 8,388,608</div>
+                        <div class="prob-compare-note">로또 1등과 <strong>거의 같은</strong> 확률</div>
+                    </div>
+                </div>
+                <div class="prob-compare-item">
+                    <div class="prob-compare-icon">👶</div>
+                    <div class="prob-compare-body">
+                        <div class="prob-compare-title">네쌍둥이 출산 확률</div>
+                        <div class="prob-compare-odds">약 1 / 15,000,000</div>
+                        <div class="prob-compare-note">로또 1등보다 <strong>약 2배</strong> 더 어려움</div>
+                    </div>
+                </div>
+                <div class="prob-compare-item">
+                    <div class="prob-compare-icon">🏀</div>
+                    <div class="prob-compare-body">
+                        <div class="prob-compare-title">하프라인 슛 성공</div>
+                        <div class="prob-compare-odds">약 1 / 50</div>
+                        <div class="prob-compare-note">로또 1등보다 <strong>약 16만배</strong> 더 쉬움</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">로또의 기대값</div>
+            <div class="page-content">
+                <p><strong>기대값</strong>이란, 한 장을 샀을 때 평균적으로 돌려받을 수 있는 금액입니다.</p>
+                <table class="tbl" style="margin:16px 0;">
+                    <thead>
+                        <tr>
+                            <th>등수</th>
+                            <th>평균 당첨금</th>
+                            <th>확률</th>
+                            <th style="text-align:right;">기대값</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1등</td><td>약 20억원</td><td>1/8,145,060</td><td style="text-align:right;">약 246원</td></tr>
+                        <tr><td>2등</td><td>약 5,000만원</td><td>1/1,357,510</td><td style="text-align:right;">약 37원</td></tr>
+                        <tr><td>3등</td><td>약 150만원</td><td>1/35,724</td><td style="text-align:right;">약 42원</td></tr>
+                        <tr><td>4등</td><td>50,000원</td><td>1/733</td><td style="text-align:right;">약 68원</td></tr>
+                        <tr><td>5등</td><td>5,000원</td><td>1/45</td><td style="text-align:right;">약 111원</td></tr>
+                        <tr style="border-top:2px solid var(--accent);background:linear-gradient(135deg,rgba(0,113,227,0.05),rgba(175,82,222,0.05));">
+                            <td colspan="3"><strong>총 기대값 합계</strong></td>
+                            <td style="text-align:right;"><strong style="font-size:16px;color:var(--accent);">약 504원</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="prob-ev-summary">
+                    <div class="prob-ev-item">
+                        <div class="prob-ev-label">로또 1장 가격</div>
+                        <div class="prob-ev-value">1,000원</div>
+                    </div>
+                    <div class="prob-ev-item">
+                        <div class="prob-ev-label">평균 기대값</div>
+                        <div class="prob-ev-value" style="color:var(--red);">약 504원</div>
+                    </div>
+                    <div class="prob-ev-item">
+                        <div class="prob-ev-label">기대 수익률</div>
+                        <div class="prob-ev-value" style="color:var(--red);">약 -49.6%</div>
+                    </div>
+                </div>
+
+                <p>평균적으로 1,000원짜리 로또 1장을 사면 <strong>약 504원</strong>을 돌려받는 셈입니다.</p>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">매주 사면 1등에 언제 당첨될까?</div>
+            <div class="page-content">
+                <p>매주 로또 1장(1,000원)을 산다고 가정해봅니다.</p>
+                <div class="prob-timeline">
+                    <div class="prob-timeline-item">
+                        <div class="prob-timeline-period">1년</div>
+                        <div class="prob-timeline-detail">
+                            <div>52장 구매 · 52,000원 투자</div>
+                            <div class="prob-timeline-chance">1등 확률: <strong>0.000639%</strong></div>
+                        </div>
+                    </div>
+                    <div class="prob-timeline-item">
+                        <div class="prob-timeline-period">10년</div>
+                        <div class="prob-timeline-detail">
+                            <div>520장 구매 · 520,000원 투자</div>
+                            <div class="prob-timeline-chance">1등 확률: <strong>0.00638%</strong></div>
+                        </div>
+                    </div>
+                    <div class="prob-timeline-item">
+                        <div class="prob-timeline-period">100년</div>
+                        <div class="prob-timeline-detail">
+                            <div>5,200장 구매 · 5,200,000원 투자</div>
+                            <div class="prob-timeline-chance">1등 확률: <strong>0.0638%</strong></div>
+                        </div>
+                    </div>
+                    <div class="prob-timeline-item prob-timeline-highlight">
+                        <div class="prob-timeline-period">156,636년</div>
+                        <div class="prob-timeline-detail">
+                            <div>8,145,060장 구매 · 약 81억원 투자</div>
+                            <div class="prob-timeline-chance">1등 확률: <strong>약 63.2%</strong> (통계적 기대)</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top:16px;">통계적으로 1등에 한 번 당첨되려면 매주 1장씩 <strong>약 15만 6천년</strong>을 사야 합니다.</p>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">알아두면 좋은 로또 상식</div>
+            <div class="page-content">
+                <div class="prob-tips">
+                    <div class="prob-tip">
+                        <div class="prob-tip-q">자동 vs 수동, 당첨 확률이 다른가요?</div>
+                        <div class="prob-tip-a">아닙니다. 자동이든 수동이든 어떤 번호 조합이든 <strong>확률은 동일하게 1/8,145,060</strong>입니다.</div>
+                    </div>
+                    <div class="prob-tip">
+                        <div class="prob-tip-q">같은 번호를 매주 사면 유리한가요?</div>
+                        <div class="prob-tip-a">아닙니다. 매 추첨은 <strong>독립 사건</strong>이므로, 이전에 어떤 번호를 골랐는지와 상관없이 매회 확률은 동일합니다.</div>
+                    </div>
+                    <div class="prob-tip">
+                        <div class="prob-tip-q">많이 나온 번호를 고르면 유리한가요?</div>
+                        <div class="prob-tip-a">아닙니다. 과거 출현 빈도는 미래 추첨에 영향을 주지 않습니다. 로또 추첨기는 매회 <strong>완전한 무작위</strong>로 작동합니다.</div>
+                    </div>
+                    <div class="prob-tip">
+                        <div class="prob-tip-q">1등 당첨금을 높이려면?</div>
+                        <div class="prob-tip-a">다른 사람이 잘 선택하지 않는 번호를 고르면, 1등이 됐을 때 당첨금을 <strong>나누는 인원이 줄어</strong> 실수령액이 커집니다.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     </div><!-- container 닫기 -->
 
     <!-- 오른쪽 사이드바 광고 -->
-    <aside class="sidebar-ad sidebar-right">
-        <!--
+    <aside class="sidebar-ad sidebar-ad-right">
         <ins class="adsbygoogle"
-             style="display:inline-block;width:160px;height:600px"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="RIGHT_SIDEBAR_SLOT"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        -->
-        <div style="background:#f0f0f0; width:160px; height:600px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; text-align:center; padding:10px;">
-            오른쪽<br>사이드바<br>광고<br>(160x600)
-        </div>
+             style="display:block"
+             data-ad-client="ca-pub-3398247421662455"
+             data-ad-slot="RIGHT_AD_SLOT"
+             data-ad-format="vertical"
+             data-full-width-responsive="false"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </aside>
-
 </div><!-- layout-wrapper 닫기 -->
+{% endblock %}
 
+{% block scripts %}
 <script>
 let appData = null;
 let currentPage = 1;
@@ -644,7 +944,7 @@ function shareKakao() {
         `SET ${i+1}: ${p.join(', ')}`
     ).join('\\n');
 
-    const shareText = `🎰 Lotto Lab AI 예측 번호\\n제 ${nextDraw}회\\n\\n${predictionsText}\\n\\n통계 분석 기반 AI 예측 ✨`;
+    const shareText = `🎰 Lotto Lab 통계 분석 추천 번호\\n제 ${nextDraw}회\\n\\n${predictionsText}\\n\\n역대 데이터 기반 통계 분석`;
 
     // 카카오톡 공유 (SDK 설정 필요)
     if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
@@ -687,14 +987,392 @@ function shareTwitter() {
         `SET ${i+1}: ${p.join(', ')}`
     ).join('\\n');
 
-    const shareText = `🎰 Lotto Lab AI 예측 번호\\n제 ${nextDraw}회\\n${predictionsText}\\n\\n통계 분석 기반 AI 예측`;
+    const shareText = `🎰 Lotto Lab 통계 분석 추천 번호\\n제 ${nextDraw}회\\n${predictionsText}\\n\\n역대 데이터 기반 통계 분석`;
     const url = window.location.href;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`;
 
     window.open(twitterUrl, '_blank', 'width=550,height=420');
 }
 
+// ── 판매점 지도 ──
+let storeMap = null;
+let storeMarkers = null;
+let storeData = [];
+let storesLoaded = false;
+
+// 탭 전환 시 판매점 데이터 로드
+document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+        if (tab.dataset.tab === 'stores' && !storesLoaded) {
+            loadStores();
+        }
+        // 지도 사이즈 갱신 (탭 전환 후 지도가 올바르게 렌더링되도록)
+        if (tab.dataset.tab === 'stores' && storeMap) {
+            setTimeout(() => storeMap.invalidateSize(), 100);
+        }
+    });
+});
+
+function initStoreMap() {
+    if (storeMap) return;
+    storeMap = L.map('store-map').setView([36.5, 127.5], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 18,
+    }).addTo(storeMap);
+    storeMarkers = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+    });
+    storeMap.addLayer(storeMarkers);
+}
+
+async function loadStores() {
+    const loading = document.getElementById('store-loading');
+    loading.style.display = 'flex';
+    initStoreMap();
+
+    try {
+        const resp = await fetch('/api/stores');
+        const data = await resp.json();
+        storeData = data.stores || [];
+
+        if (storeData.length === 0) {
+            document.getElementById('store-summary').innerHTML =
+                '<div style="color:var(--text-3);font-size:14px;padding:8px 0;">판매점 데이터를 수집 중입니다. 잠시 후 다시 시도해주세요.</div>';
+            loading.style.display = 'none';
+            pollStoreStatus();
+            return;
+        }
+
+        storesLoaded = true;
+        renderStores(storeData);
+        loading.style.display = 'none';
+    } catch (e) {
+        loading.style.display = 'none';
+        document.getElementById('store-summary').innerHTML =
+            '<div style="color:var(--red);font-size:14px;">판매점 데이터를 불러올 수 없습니다.</div>';
+    }
+}
+
+async function pollStoreStatus() {
+    try {
+        const resp = await fetch('/api/stores');
+        const data = await resp.json();
+        if (data.stores && data.stores.length > 0) {
+            storeData = data.stores;
+            storesLoaded = true;
+            renderStores(storeData);
+            document.getElementById('store-loading').style.display = 'none';
+            return;
+        }
+    } catch (e) {}
+    setTimeout(pollStoreStatus, 5000);
+}
+
+const STORE_PAGE_SIZE = 10;
+let storeCurrentPage = 1;
+let storeCurrentList = [];
+
+function renderStores(stores) {
+    storeCurrentList = stores;
+    storeCurrentPage = 1;
+
+    // 요약 정보
+    const totalWins = stores.reduce((sum, s) => sum + (s.win_count || 0), 0);
+    document.getElementById('store-summary').innerHTML = `
+        <div class="store-stats">
+            <div class="store-stat-item">
+                <div class="store-stat-num">${stores.length}</div>
+                <div class="store-stat-label">판매점</div>
+            </div>
+            <div class="store-stat-item">
+                <div class="store-stat-num">${totalWins}</div>
+                <div class="store-stat-label">총 1등 배출</div>
+            </div>
+            <div class="store-stat-item">
+                <div class="store-stat-num">${stores.length > 0 ? stores[0].win_count : 0}</div>
+                <div class="store-stat-label">최다 배출</div>
+            </div>
+        </div>`;
+
+    // 지도 마커
+    addStoreMarkers(stores);
+
+    // 테이블 (페이지네이션)
+    renderStorePage(1);
+}
+
+function renderStorePage(page) {
+    storeCurrentPage = page;
+    const stores = storeCurrentList;
+    const totalPages = Math.ceil(stores.length / STORE_PAGE_SIZE);
+    const start = (page - 1) * STORE_PAGE_SIZE;
+    const end = Math.min(start + STORE_PAGE_SIZE, stores.length);
+    const pageStores = stores.slice(start, end);
+
+    document.getElementById('store-tbody').innerHTML = pageStores.map((s, i) => {
+        const idx = start + i;
+        return `<tr class="store-row" onclick="focusStore(${idx})" style="cursor:pointer;">
+            <td><span class="store-rank ${idx < 3 ? 'store-rank-top' : ''}">${s.rank || (idx + 1)}</span></td>
+            <td><strong>${s.name}</strong></td>
+            <td><span class="store-wins">${s.win_count}회</span></td>
+            <td><span class="store-addr">${s.address}</span></td>
+        </tr>`;
+    }).join('');
+
+    // 페이지네이션 렌더링
+    if (totalPages <= 1) {
+        document.getElementById('store-pagination').innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    // 이전 버튼
+    html += `<button class="sp-btn ${page <= 1 ? 'sp-disabled' : ''}" ${page > 1 ? `onclick="renderStorePage(${page - 1})"` : ''}>‹</button>`;
+
+    // 페이지 번호
+    const maxVisible = 5;
+    let startPage = Math.max(1, page - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
+
+    if (startPage > 1) {
+        html += `<button class="sp-btn" onclick="renderStorePage(1)">1</button>`;
+        if (startPage > 2) html += `<span class="sp-dots">…</span>`;
+    }
+    for (let p = startPage; p <= endPage; p++) {
+        html += `<button class="sp-btn ${p === page ? 'sp-active' : ''}" onclick="renderStorePage(${p})">${p}</button>`;
+    }
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="sp-dots">…</span>`;
+        html += `<button class="sp-btn" onclick="renderStorePage(${totalPages})">${totalPages}</button>`;
+    }
+
+    // 다음 버튼
+    html += `<button class="sp-btn ${page >= totalPages ? 'sp-disabled' : ''}" ${page < totalPages ? `onclick="renderStorePage(${page + 1})"` : ''}>›</button>`;
+
+    document.getElementById('store-pagination').innerHTML = html;
+
+    // 테이블 상단으로 스크롤
+    if (page > 1) document.getElementById('store-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function addStoreMarkers(stores) {
+    if (!storeMarkers) return;
+    storeMarkers.clearLayers();
+
+    const goldIcon = L.divIcon({
+        className: 'store-marker',
+        html: '<div class="store-marker-pin"></div>',
+        iconSize: [30, 36],
+        iconAnchor: [15, 36],
+        popupAnchor: [0, -36],
+    });
+
+    stores.forEach((s, i) => {
+        if (!s.lat || !s.lng) return;
+        const marker = L.marker([s.lat, s.lng], { icon: goldIcon });
+        marker.bindPopup(`
+            <div class="store-popup">
+                <div class="store-popup-rank">${s.rank || (i + 1)}위</div>
+                <div class="store-popup-name">${s.name}</div>
+                <div class="store-popup-wins">1등 ${s.win_count}회 배출</div>
+                <div class="store-popup-addr">${s.address}</div>
+            </div>
+        `);
+        storeMarkers.addLayer(marker);
+    });
+}
+
+function filterStoresByRegion() {
+    const region = document.getElementById('store-region-filter').value;
+    if (region === 'all') {
+        renderStores(storeData);
+        storeMap.setView([36.5, 127.5], 7);
+    } else {
+        const filtered = storeData.filter(s => s.address && s.address.includes(region));
+        renderStores(filtered);
+        if (filtered.length > 0 && filtered[0].lat && filtered[0].lng) {
+            storeMap.setView([filtered[0].lat, filtered[0].lng], 10);
+        }
+    }
+}
+
+function focusStore(index) {
+    const stores = document.getElementById('store-region-filter').value === 'all'
+        ? storeData
+        : storeData.filter(s => s.address && s.address.includes(document.getElementById('store-region-filter').value));
+    const store = stores[index];
+    if (store && store.lat && store.lng && storeMap) {
+        storeMap.setView([store.lat, store.lng], 16);
+        // 해당 마커의 팝업 열기
+        storeMarkers.eachLayer(layer => {
+            const latlng = layer.getLatLng();
+            if (Math.abs(latlng.lat - store.lat) < 0.0001 && Math.abs(latlng.lng - store.lng) < 0.0001) {
+                layer.openPopup();
+            }
+        });
+    }
+}
+
+// ── 시뮬레이터 ──
+document.querySelectorAll('.sim-num').forEach((input, idx) => {
+    input.addEventListener('input', () => {
+        let v = parseInt(input.value);
+        if (v > 45) input.value = 45;
+        if (v < 1 && input.value !== '') input.value = 1;
+        if (input.value.length >= 2 && idx < 5) {
+            document.getElementById('sn' + (idx + 2)).focus();
+        }
+    });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (idx < 5) document.getElementById('sn' + (idx + 2)).focus();
+            else runSimulation();
+        }
+    });
+});
+
+function randomSimNums() {
+    const nums = [];
+    while (nums.length < 6) {
+        const n = Math.floor(Math.random() * 45) + 1;
+        if (!nums.includes(n)) nums.push(n);
+    }
+    nums.sort((a, b) => a - b);
+    for (let i = 0; i < 6; i++) document.getElementById('sn' + (i + 1)).value = nums[i];
+}
+
+function clearSim() {
+    for (let i = 1; i <= 6; i++) document.getElementById('sn' + i).value = '';
+    document.getElementById('sim-result').style.display = 'none';
+}
+
+function runSimulation() {
+    if (!appData) return;
+    const myNums = [];
+    for (let i = 1; i <= 6; i++) {
+        const v = parseInt(document.getElementById('sn' + i).value);
+        if (isNaN(v) || v < 1 || v > 45) {
+            document.getElementById('sn' + i).focus();
+            document.getElementById('sn' + i).classList.add('sim-num-error');
+            setTimeout(() => document.getElementById('sn' + i).classList.remove('sim-num-error'), 800);
+            return;
+        }
+        if (myNums.includes(v)) {
+            document.getElementById('sn' + i).focus();
+            document.getElementById('sn' + i).classList.add('sim-num-error');
+            setTimeout(() => document.getElementById('sn' + i).classList.remove('sim-num-error'), 800);
+            return;
+        }
+        myNums.push(v);
+    }
+
+    const draws = appData.draws;
+    const totalDraws = draws.length;
+    const ticketCost = 1000;
+    const totalSpent = totalDraws * ticketCost;
+    const rankCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const rankPrize = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 5000 };
+    const matchResults = [];
+
+    draws.forEach(d => {
+        const matched = myNums.filter(n => d.numbers.includes(n));
+        const bonusMatch = myNums.includes(d.bonus);
+        let rank = 0;
+        if (matched.length === 6) rank = 1;
+        else if (matched.length === 5 && bonusMatch) rank = 2;
+        else if (matched.length === 5) rank = 3;
+        else if (matched.length === 4) rank = 4;
+        else if (matched.length === 3) rank = 5;
+
+        if (rank > 0) {
+            rankCounts[rank]++;
+            let prize = 0;
+            if (rank === 1) prize = d.prize_1st || 2000000000;
+            else if (rank === 2) prize = (d.prize_1st || 2000000000) / 4;
+            else if (rank === 3) prize = 1500000;
+            else if (rank === 4) prize = 50000;
+            else prize = 5000;
+            matchResults.push({
+                draw_no: d.draw_no, date: d.date, numbers: d.numbers, bonus: d.bonus,
+                matched: matched, bonusMatch: bonusMatch, rank: rank, prize: prize
+            });
+        }
+    });
+
+    matchResults.sort((a, b) => a.rank - b.rank || a.draw_no - b.draw_no);
+
+    const totalWinnings = matchResults.reduce((sum, r) => sum + r.prize, 0);
+    const roi = totalSpent > 0 ? ((totalWinnings / totalSpent) * 100).toFixed(1) : '0.0';
+
+    // 요약
+    const totalMatches = Object.values(rankCounts).reduce((a, b) => a + b, 0);
+    document.getElementById('sim-summary').innerHTML = `
+        <div class="stat-num">${totalMatches}회 당첨</div>
+        <div class="stat-label">전체 ${totalDraws}회차 중</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:13px;color:var(--text-2);">
+            ${Object.entries(rankCounts).filter(([,c]) => c > 0).map(([r,c]) => `<span>${r}등: ${c}회</span>`).join('')}
+        </div>`;
+
+    // 수익률
+    const profitColor = totalWinnings >= totalSpent ? 'var(--green)' : 'var(--red)';
+    document.getElementById('sim-profit').innerHTML = `
+        <div class="stat-num" style="color:${profitColor}">${roi}%</div>
+        <div class="stat-label">투자 대비 수익률</div>
+        <div style="display:flex;justify-content:center;gap:20px;margin-top:12px;font-size:13px;color:var(--text-2);">
+            <span>투자: ${formatMoney(totalSpent)}원</span>
+            <span>당첨금: ${formatSimMoney(totalWinnings)}</span>
+        </div>`;
+
+    // 등수별 바
+    const maxRankCount = Math.max(...Object.values(rankCounts), 1);
+    const rankNames = { 1: '1등', 2: '2등', 3: '3등', 4: '4등', 5: '5등' };
+    const rankColors = { 1: '#ff3b30', 2: '#ff9f0a', 3: '#af52de', 4: '#0071e3', 5: '#34c759' };
+    document.getElementById('sim-rank-chart').innerHTML = Object.entries(rankCounts).map(([r, c]) => `
+        <div class="sim-rank-row">
+            <span class="sim-rank-label" style="color:${rankColors[r]}">${rankNames[r]}</span>
+            <div class="sim-rank-bar-wrap">
+                <div class="sim-rank-bar" style="width:${c > 0 ? Math.max(c / maxRankCount * 100, 3) : 0}%;background:${rankColors[r]}"></div>
+            </div>
+            <span class="sim-rank-count">${c}회</span>
+        </div>`).join('');
+
+    // 당첨 내역 테이블
+    document.getElementById('sim-match-count').textContent = `${matchResults.length}건`;
+    document.getElementById('sim-tbody').innerHTML = matchResults.length > 0
+        ? matchResults.slice(0, 100).map(r => `
+            <tr>
+                <td><span class="draw-no">${r.draw_no}</span></td>
+                <td><span class="draw-date">${r.date}</span></td>
+                <td>
+                    <div class="balls-row">
+                        ${r.numbers.map(n => {
+                            const isMatch = r.matched.includes(n);
+                            return `<span class="ball ball-sm ${getBallClass(n)} ${isMatch ? '' : 'ball-dim'}">${n}</span>`;
+                        }).join('')}
+                        <span class="balls-divider"></span>
+                        ${`<span class="ball ball-sm ${getBallClass(r.bonus)} ${r.bonusMatch ? '' : 'ball-dim'} ball-bonus">${r.bonus}</span>`}
+                    </div>
+                </td>
+                <td><strong>${r.matched.length}개${r.bonusMatch ? '+B' : ''}</strong></td>
+                <td><span style="color:${rankColors[r.rank]};font-weight:700;">${rankNames[r.rank]}</span></td>
+            </tr>`).join('')
+        : '<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:40px;">당첨 내역이 없습니다</td></tr>';
+
+    document.getElementById('sim-result').style.display = 'block';
+    document.getElementById('sim-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function formatSimMoney(val) {
+    if (val >= 100000000) return (val / 100000000).toFixed(1) + '억원';
+    if (val >= 10000) return (val / 10000).toFixed(0) + '만원';
+    return val.toLocaleString() + '원';
+}
+
 loadData();
 </script>
-</body>
-</html>
+{% endblock %}

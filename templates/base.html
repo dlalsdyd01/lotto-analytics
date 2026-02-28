@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-adsense-account" content="ca-pub-3398247421662455">
+    <title>{% block title %}Lotto Lab{% endblock %}</title>
+    <meta name="description" content="{% block description %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Lotto Lab{% endblock %}">
+    <meta property="og:description" content="{% block og_desc %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
+    <meta property="og:url" content="https://lottoanalytics.co.kr{{ request.path }}">
+    <meta property="og:site_name" content="Lotto Lab">
+    <meta property="og:image" content="https://lottoanalytics.co.kr/static/img/og-image.svg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block tw_title %}Lotto Lab{% endblock %}">
+    <meta name="twitter:description" content="{% block tw_desc %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
+    <meta name="twitter:image" content="https://lottoanalytics.co.kr/static/img/og-image.svg">
+
+    <link rel="canonical" href="https://lottoanalytics.co.kr{{ request.path }}">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+
+    {% block head_extra %}{% endblock %}
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3358247421662455"
+         crossorigin="anonymous"></script>
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-925QJ7TR52"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-925QJ7TR52');
+    </script>
+
+    {% block schema %}{% endblock %}
+</head>
+<body>
+
+{% block header %}
+<header class="header">
+    <div class="header-inner">
+        <a href="/" class="logo" style="text-decoration:none;color:inherit;">Lotto Lab</a>
+        {% block header_right %}
+        <a href="/" class="header-btn">홈으로</a>
+        {% endblock %}
+    </div>
+</header>
+{% endblock %}
+
+{% block body %}{% endblock %}
+
+<footer class="page-footer">
+    <div class="footer-links">
+        <a href="/">홈</a>
+        <a href="/probability">확률 교실</a>
+        <a href="/tax-calculator">세금계산기</a>
+        <a href="/faq">FAQ</a>
+        <a href="/privacy">개인정보처리방침</a>
+        <a href="/terms">이용약관</a>
+        <a href="/about">소개</a>
+        <a href="/contact">연락처</a>
+    </div>
+    <p>&copy; 2024-2026 Lotto Lab. 로또는 완전한 무작위 추첨이며, 과거 데이터로 미래를 예측할 수 없습니다.</p>
+</footer>
+
+<!-- 스크롤 맨 위로 버튼 -->
+<button id="scroll-top-btn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="맨 위로">&#8593;</button>
+<script>
+(function(){
+    const btn=document.getElementById('scroll-top-btn');
+    window.addEventListener('scroll',()=>{btn.classList.toggle('show',window.scrollY>400);});
+})();
+
+// 다크모드
+function toggleDark(){
+    const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',t);
+    localStorage.setItem('theme',t);
+    const btn=document.querySelector('.dark-toggle');
+    if(btn)btn.innerHTML=t==='dark'?'&#9788;':'&#9790;';
+}
+(function(){
+    const saved=localStorage.getItem('theme');
+    if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+        document.documentElement.setAttribute('data-theme','dark');
+        const btn=document.querySelector('.dark-toggle');
+        if(btn)btn.innerHTML='&#9788;';
+    }
+})();
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

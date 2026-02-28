@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}로또 확률 교실 - 당첨 확률과 기대값 알아보기 | Lotto Lab{% endblock %}
+{% block description %}로또 6/45 등수별 당첨 확률, 기대값, 벼락맞을 확률과 비교까지. 로또의 수학을 재미있게 알아보세요.{% endblock %}
+{% block og_title %}로또 확률 교실 - Lotto Lab{% endblock %}
+{% block og_desc %}로또 당첨 확률을 재미있는 비교와 함께 알아보세요.{% endblock %}
+{% block tw_title %}로또 확률 교실 - Lotto Lab{% endblock %}
+{% block tw_desc %}로또 당첨 확률을 재미있는 비교와 함께 알아보세요.{% endblock %}
+
+{% block body %}
+<div class="layout-wrapper" style="grid-template-columns:1fr;">
+<div class="container" style="max-width:860px;">
+
+    <div class="card fade-in">
+        <div class="card-header" style="font-size:24px;margin-bottom:4px;">로또 확률 교실</div>
+        <p style="font-size:14px;color:var(--text-2);margin-bottom:0;">로또 6/45의 수학적 확률과 기대값을 알아봅니다.</p>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">등수별 당첨 확률</div>
+        <p class="prob-desc">로또 6/45는 1~45번 중 6개를 선택하고, 보너스 번호 1개가 추가로 추첨됩니다.</p>
+        <div class="prob-cards">
+            <div class="prob-card prob-card-1"><div class="prob-card-rank">1등</div><div class="prob-card-match">6개 일치</div><div class="prob-card-odds">1 / 8,145,060</div><div class="prob-card-pct">0.0000123%</div></div>
+            <div class="prob-card prob-card-2"><div class="prob-card-rank">2등</div><div class="prob-card-match">5개 + 보너스</div><div class="prob-card-odds">1 / 1,357,510</div><div class="prob-card-pct">0.0000737%</div></div>
+            <div class="prob-card prob-card-3"><div class="prob-card-rank">3등</div><div class="prob-card-match">5개 일치</div><div class="prob-card-odds">1 / 35,724</div><div class="prob-card-pct">0.00280%</div></div>
+            <div class="prob-card prob-card-4"><div class="prob-card-rank">4등</div><div class="prob-card-match">4개 일치</div><div class="prob-card-odds">1 / 733</div><div class="prob-card-pct">0.136%</div></div>
+            <div class="prob-card prob-card-5"><div class="prob-card-rank">5등</div><div class="prob-card-match">3개 일치</div><div class="prob-card-odds">1 / 45</div><div class="prob-card-pct">2.22%</div></div>
+        </div>
+        <div class="prob-total-box"><span>아무 등수라도 당첨될 확률</span><strong>약 1 / 42 (2.38%)</strong></div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">1등 확률은 어떻게 계산할까?</div>
+        <div class="page-content">
+            <p>45개 번호 중 6개를 뽑는 조합의 수:</p>
+            <div class="prob-formula"><sub>45</sub>C<sub>6</sub> = 45! / (6! × 39!) = <strong>8,145,060</strong>가지</div>
+            <p>이 중 정확히 1가지만 1등이므로 확률은 <strong>1/8,145,060</strong> 입니다.</p>
+            <p style="margin-top:16px;">2등은 보너스 번호까지 맞춰야 하므로:</p>
+            <div class="prob-formula">6가지(빠진 번호 선택) × 1(보너스) = 6가지 → <strong>1/1,357,510</strong></div>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">로또 1등 vs 일상 속 확률</div>
+        <p class="prob-desc">1등 당첨 확률 1/8,145,060이 얼마나 어려운 숫자인지 비교해봅니다.</p>
+        <div class="prob-compare-list">
+            <div class="prob-compare-item"><div class="prob-compare-icon">&#9889;</div><div class="prob-compare-body"><div class="prob-compare-title">벼락에 맞을 확률</div><div class="prob-compare-odds">약 1 / 1,200,000</div><div class="prob-compare-note">로또 1등보다 <strong>약 7배</strong> 더 쉬움</div></div></div>
+            <div class="prob-compare-item"><div class="prob-compare-icon">&#127776;</div><div class="prob-compare-body"><div class="prob-compare-title">유성에 맞을 확률</div><div class="prob-compare-odds">약 1 / 1,600,000</div><div class="prob-compare-note">로또 1등보다 <strong>약 5배</strong> 더 쉬움</div></div></div>
+            <div class="prob-compare-item"><div class="prob-compare-icon">&#127919;</div><div class="prob-compare-body"><div class="prob-compare-title">동전 23번 연속 앞면</div><div class="prob-compare-odds">약 1 / 8,388,608</div><div class="prob-compare-note">로또 1등과 <strong>거의 같은</strong> 확률</div></div></div>
+            <div class="prob-compare-item"><div class="prob-compare-icon">&#128118;</div><div class="prob-compare-body"><div class="prob-compare-title">네쌍둥이 출산 확률</div><div class="prob-compare-odds">약 1 / 15,000,000</div><div class="prob-compare-note">로또 1등보다 <strong>약 2배</strong> 더 어려움</div></div></div>
+            <div class="prob-compare-item"><div class="prob-compare-icon">&#127936;</div><div class="prob-compare-body"><div class="prob-compare-title">하프라인 슛 성공</div><div class="prob-compare-odds">약 1 / 50</div><div class="prob-compare-note">로또 1등보다 <strong>약 16만배</strong> 더 쉬움</div></div></div>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">로또의 기대값</div>
+        <div class="page-content">
+            <p><strong>기대값</strong>이란, 한 장을 샀을 때 평균적으로 돌려받을 수 있는 금액입니다.</p>
+            <table class="tbl" style="margin:16px 0;">
+                <thead><tr><th>등수</th><th>평균 당첨금</th><th>확률</th><th style="text-align:right;">기대값</th></tr></thead>
+                <tbody>
+                    <tr><td>1등</td><td>약 20억원</td><td>1/8,145,060</td><td style="text-align:right;">약 246원</td></tr>
+                    <tr><td>2등</td><td>약 5,000만원</td><td>1/1,357,510</td><td style="text-align:right;">약 37원</td></tr>
+                    <tr><td>3등</td><td>약 150만원</td><td>1/35,724</td><td style="text-align:right;">약 42원</td></tr>
+                    <tr><td>4등</td><td>50,000원</td><td>1/733</td><td style="text-align:right;">약 68원</td></tr>
+                    <tr><td>5등</td><td>5,000원</td><td>1/45</td><td style="text-align:right;">약 111원</td></tr>
+                    <tr style="border-top:2px solid var(--accent);background:linear-gradient(135deg,rgba(0,113,227,0.05),rgba(175,82,222,0.05));"><td colspan="3"><strong>총 기대값 합계</strong></td><td style="text-align:right;"><strong style="font-size:16px;color:var(--accent);">약 504원</strong></td></tr>
+                </tbody>
+            </table>
+            <div class="prob-ev-summary">
+                <div class="prob-ev-item"><div class="prob-ev-label">로또 1장 가격</div><div class="prob-ev-value">1,000원</div></div>
+                <div class="prob-ev-item"><div class="prob-ev-label">평균 기대값</div><div class="prob-ev-value" style="color:var(--red);">약 504원</div></div>
+                <div class="prob-ev-item"><div class="prob-ev-label">기대 수익률</div><div class="prob-ev-value" style="color:var(--red);">약 -49.6%</div></div>
+            </div>
+            <p>평균적으로 1,000원짜리 로또 1장을 사면 <strong>약 504원</strong>을 돌려받는 셈입니다. 나머지 약 496원은 복권 기금(공익사업), 판매 수수료 등으로 사용됩니다.</p>
+            <div class="info-warn"><strong>참고:</strong> 기대값은 장기적인 평균 개념이며, 실제로는 대부분 꽝이거나 5등에 당첨됩니다.</div>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">매주 사면 1등에 언제 당첨될까?</div>
+        <div class="page-content">
+            <p>매주 로또 1장(1,000원)을 산다고 가정해봅니다.</p>
+            <div class="prob-timeline">
+                <div class="prob-timeline-item"><div class="prob-timeline-period">1년</div><div class="prob-timeline-detail"><div>52장 구매 · 52,000원 투자</div><div class="prob-timeline-chance">1등 확률: <strong>0.000639%</strong></div></div></div>
+                <div class="prob-timeline-item"><div class="prob-timeline-period">10년</div><div class="prob-timeline-detail"><div>520장 구매 · 520,000원 투자</div><div class="prob-timeline-chance">1등 확률: <strong>0.00638%</strong></div></div></div>
+                <div class="prob-timeline-item"><div class="prob-timeline-period">100년</div><div class="prob-timeline-detail"><div>5,200장 구매 · 5,200,000원 투자</div><div class="prob-timeline-chance">1등 확률: <strong>0.0638%</strong></div></div></div>
+                <div class="prob-timeline-item prob-timeline-highlight"><div class="prob-timeline-period">156,636년</div><div class="prob-timeline-detail"><div>8,145,060장 구매 · 약 81억원 투자</div><div class="prob-timeline-chance">1등 확률: <strong>약 63.2%</strong> (통계적 기대)</div></div></div>
+            </div>
+            <p style="margin-top:16px;">통계적으로 1등에 한 번 당첨되려면 매주 1장씩 <strong>약 15만 6천년</strong>을 사야 합니다. 이는 인류 문명 역사(약 5,000년)보다 31배 긴 시간입니다.</p>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">알아두면 좋은 로또 상식</div>
+        <div class="page-content">
+            <div class="prob-tips">
+                <div class="prob-tip"><div class="prob-tip-q">자동 vs 수동, 당첨 확률이 다른가요?</div><div class="prob-tip-a">아닙니다. 자동이든 수동이든 어떤 번호 조합이든 <strong>확률은 동일하게 1/8,145,060</strong>입니다. 과거 1등 당첨자 중 자동 선택 비율이 높은 이유는 자동으로 구매하는 사람이 더 많기 때문입니다.</div></div>
+                <div class="prob-tip"><div class="prob-tip-q">같은 번호를 매주 사면 유리한가요?</div><div class="prob-tip-a">아닙니다. 매 추첨은 <strong>독립 사건</strong>이므로, 이전에 어떤 번호를 골랐는지와 상관없이 매회 확률은 동일합니다.</div></div>
+                <div class="prob-tip"><div class="prob-tip-q">많이 나온 번호를 고르면 유리한가요?</div><div class="prob-tip-a">아닙니다. 과거 출현 빈도는 미래 추첨에 영향을 주지 않습니다. 로또 추첨기는 매회 <strong>완전한 무작위</strong>로 작동합니다.</div></div>
+                <div class="prob-tip"><div class="prob-tip-q">1등 당첨금을 높이려면?</div><div class="prob-tip-a">다른 사람이 잘 선택하지 않는 번호를 고르면, 1등이 됐을 때 당첨금을 <strong>나누는 인원이 줄어</strong> 실수령액이 커집니다. 인기 번호(생일 범위 1~31, 연속수 등)를 피하는 것이 전략입니다.</div></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

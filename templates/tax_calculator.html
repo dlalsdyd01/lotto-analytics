@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}로또 당첨금 세금 계산기 - Lotto Lab{% endblock %}
+{% block description %}로또 당첨금 실수령액을 계산해보세요. 1등~5등 당첨금 세금(소득세, 지방소득세) 자동 계산기.{% endblock %}
+{% block og_title %}로또 당첨금 세금 계산기 - Lotto Lab{% endblock %}
+{% block og_desc %}로또 당첨금 실수령액을 계산해보세요. 세금 자동 계산기.{% endblock %}
+{% block tw_title %}로또 당첨금 세금 계산기 - Lotto Lab{% endblock %}
+{% block tw_desc %}로또 당첨금 실수령액을 계산해보세요.{% endblock %}
+
+{% block body %}
+<div class="layout-wrapper" style="grid-template-columns:1fr;">
+<div class="container" style="max-width:860px;">
+
+    <div class="card fade-in">
+        <div class="card-header" style="font-size:24px;margin-bottom:8px;">로또 당첨금 세금 계산기</div>
+        <p style="font-size:14px;color:var(--text-2);margin-bottom:24px;">당첨금을 입력하면 세금과 실수령액을 자동으로 계산합니다.</p>
+
+        <div style="margin-bottom:20px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px;">빠른 선택</div>
+            <div class="tax-quick-btns">
+                <button class="tax-quick-btn" onclick="setAmount(5000)">5등 (5,000원)</button>
+                <button class="tax-quick-btn" onclick="setAmount(50000)">4등 (5만원)</button>
+                <button class="tax-quick-btn" onclick="setAmount(1500000)">3등 (150만원)</button>
+                <button class="tax-quick-btn" onclick="setAmount(5000000000)">50억원</button>
+                <button class="tax-quick-btn" onclick="setAmount(2000000000)">20억원</button>
+                <button class="tax-quick-btn" onclick="setAmount(1000000000)">10억원</button>
+                <button class="tax-quick-btn" onclick="setAmount(500000000)">5억원</button>
+                <button class="tax-quick-btn" onclick="setAmount(100000000)">1억원</button>
+            </div>
+        </div>
+
+        <div class="tax-input-group">
+            <label class="tax-label">당첨금액 (원)</label>
+            <div class="tax-input-wrap">
+                <input type="text" id="tax-amount" class="tax-input" placeholder="당첨금액을 입력하세요" oninput="onAmountInput(this)">
+                <span class="tax-input-suffix">원</span>
+            </div>
+            <div id="tax-amount-text" class="tax-amount-text"></div>
+        </div>
+
+        <button class="tax-calc-btn" onclick="calculateTax()">계산하기</button>
+    </div>
+
+    <div id="tax-result" style="display:none;">
+        <div class="card fade-in">
+            <div class="card-header">계산 결과</div>
+            <div class="tax-result-hero" id="tax-result-hero"></div>
+            <div class="tax-result-detail">
+                <table class="tbl">
+                    <thead><tr><th>항목</th><th style="text-align:right;">금액</th></tr></thead>
+                    <tbody id="tax-result-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <div class="card-header">세금 계산 방법</div>
+            <div class="page-content">
+                <p>로또 당첨금에 대한 세금은 <strong>기타소득세</strong>로 분류되며, 금액 구간에 따라 다른 세율이 적용됩니다.</p>
+                <table class="tbl" style="margin:16px 0;">
+                    <thead><tr><th>당첨금 구간</th><th>소득세</th><th>지방소득세</th><th>합계</th></tr></thead>
+                    <tbody>
+                        <tr><td>5만원 이하</td><td>비과세</td><td>비과세</td><td><strong>0%</strong></td></tr>
+                        <tr><td>5만원 초과 ~ 3억원</td><td>20%</td><td>2%</td><td><strong>22%</strong></td></tr>
+                        <tr><td>3억원 초과</td><td>30%</td><td>3%</td><td><strong>33%</strong></td></tr>
+                    </tbody>
+                </table>
+                <p>3억원을 초과하는 당첨금의 경우, 3억원까지는 22%, 3억원 초과분에 대해서는 33%가 적용됩니다.</p>
+                <div class="info-warn">
+                    <strong>참고:</strong> 이 계산기는 2024년 기준 세법을 적용합니다. 실제 세금은 세법 개정에 따라 달라질 수 있습니다.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function formatNumber(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function koreanMoney(v){if(v>=1e8){const e=Math.floor(v/1e8),m=Math.floor((v%1e8)/1e4);return m>0?`${e}억 ${formatNumber(m)}만원`:`${e}억원`;}if(v>=1e4)return`${formatNumber(Math.floor(v/1e4))}만원`;return`${formatNumber(v)}원`;}
+function setAmount(v){document.getElementById('tax-amount').value=formatNumber(v);updateAmountText(v);calculateTax();}
+function onAmountInput(el){let r=el.value.replace(/[^0-9]/g,'');if(r){el.value=formatNumber(parseInt(r));updateAmountText(parseInt(r));}else{el.value='';document.getElementById('tax-amount-text').textContent='';}}
+function updateAmountText(v){if(v>0)document.getElementById('tax-amount-text').textContent=koreanMoney(v);}
+function calculateTax(){
+    const raw=document.getElementById('tax-amount').value.replace(/[^0-9]/g,'');
+    const amount=parseInt(raw);if(!amount||amount<=0)return;
+    let tax=0,detail=[];
+    if(amount<=50000){tax=0;detail.push({l:'비과세 (5만원 이하)',a:0});}
+    else if(amount<=3e8){const i=amount*0.20,lo=amount*0.02;tax=i+lo;detail.push({l:'소득세 (20%)',a:Math.floor(i)});detail.push({l:'지방소득세 (2%)',a:Math.floor(lo)});}
+    else{const b=3e8,o=amount-b,i1=b*0.20,l1=b*0.02,i2=o*0.30,l2=o*0.03;tax=i1+l1+i2+l2;detail.push({l:'소득세 - 3억원 이하분 (20%)',a:Math.floor(i1)});detail.push({l:'지방소득세 - 3억원 이하분 (2%)',a:Math.floor(l1)});detail.push({l:'소득세 - 3억원 초과분 (30%)',a:Math.floor(i2)});detail.push({l:'지방소득세 - 3억원 초과분 (3%)',a:Math.floor(l2)});}
+    tax=Math.floor(tax);const net=amount-tax,rate=((tax/amount)*100).toFixed(1);
+    document.getElementById('tax-result-hero').innerHTML=`<div class="tax-hero-row"><div class="tax-hero-item"><div class="tax-hero-label">당첨금</div><div class="tax-hero-value">${koreanMoney(amount)}</div></div><div class="tax-hero-arrow">-</div><div class="tax-hero-item"><div class="tax-hero-label">세금 (${rate}%)</div><div class="tax-hero-value" style="color:var(--red);">${koreanMoney(tax)}</div></div><div class="tax-hero-arrow">=</div><div class="tax-hero-item tax-hero-highlight"><div class="tax-hero-label">실수령액</div><div class="tax-hero-value" style="color:var(--green);font-size:28px;">${koreanMoney(net)}</div></div></div>`;
+    let rows=`<tr><td>당첨금</td><td style="text-align:right;font-weight:600;">${formatNumber(amount)}원</td></tr>`;
+    detail.forEach(d=>{rows+=`<tr><td>${d.l}</td><td style="text-align:right;color:var(--red);">-${formatNumber(d.a)}원</td></tr>`;});
+    rows+=`<tr style="border-top:2px solid var(--accent);"><td><strong>총 세금</strong></td><td style="text-align:right;font-weight:700;color:var(--red);">-${formatNumber(tax)}원</td></tr><tr style="background:linear-gradient(135deg,rgba(0,113,227,0.05),rgba(175,82,222,0.05));"><td><strong>실수령액</strong></td><td style="text-align:right;font-weight:700;font-size:16px;color:var(--green);">${formatNumber(net)}원</td></tr>`;
+    document.getElementById('tax-result-tbody').innerHTML=rows;
+    document.getElementById('tax-result').style.display='block';
+    document.getElementById('tax-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+{% endblock %}

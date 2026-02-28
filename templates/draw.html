@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}제 {{ draw.draw_no }}회 로또 당첨번호 분석 - Lotto Lab{% endblock %}
+{% block description %}제 {{ draw.draw_no }}회 로또 당첨번호 {{ draw.numbers | join(', ') }} + 보너스 {{ draw.bonus }}. {{ draw.date }} 추첨. 1등 당첨금 및 통계 분석.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}제 {{ draw.draw_no }}회 로또 당첨번호 분석 - Lotto Lab{% endblock %}
+{% block og_desc %}제 {{ draw.draw_no }}회 로또 당첨번호 {{ draw.numbers | join(', ') }} + {{ draw.bonus }}. 상세 통계 분석.{% endblock %}
+{% block tw_title %}제 {{ draw.draw_no }}회 로또 당첨번호 분석 - Lotto Lab{% endblock %}
+{% block tw_desc %}제 {{ draw.draw_no }}회 로또 당첨번호 상세 통계 분석.{% endblock %}
+
+{% block header_right %}
+<nav class="header-nav">
+    {% if draw.draw_no > 1 %}
+    <a href="/draw/{{ draw.draw_no - 1 }}" class="header-btn">&lsaquo; 이전</a>
+    {% endif %}
+    {% if next_draw %}
+    <a href="/draw/{{ draw.draw_no + 1 }}" class="header-btn">다음 &rsaquo;</a>
+    {% endif %}
+</nav>
+{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "제 {{ draw.draw_no }}회 로또 당첨번호 분석",
+  "datePublished": "{{ draw.date }}",
+  "author": {"@type": "Organization", "name": "Lotto Lab"},
+  "publisher": {"@type": "Organization", "name": "Lotto Lab"}
+}
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="layout-wrapper" style="grid-template-columns:1fr;">
+<div class="container" style="max-width:860px;">
+
+    <div class="draw-hero fade-in">
+        <div class="draw-hero-badge">제 {{ draw.draw_no }}회</div>
+        <div class="draw-hero-date">{{ draw.date }} 추첨</div>
+        <div class="draw-hero-balls">
+            {% for n in draw.numbers %}
+            <span class="ball ball-lg ball-{{ '1' if n <= 10 else '2' if n <= 20 else '3' if n <= 30 else '4' if n <= 40 else '5' }}">{{ n }}</span>
+            {% endfor %}
+            <span class="balls-divider" style="height:30px;"></span>
+            <span class="ball ball-lg ball-{{ '1' if draw.bonus <= 10 else '2' if draw.bonus <= 20 else '3' if draw.bonus <= 30 else '4' if draw.bonus <= 40 else '5' }} ball-bonus">{{ draw.bonus }}</span>
+        </div>
+    </div>
+
+    <div class="g2 fade-in">
+        <div class="card">
+            <div class="card-header">1등 당첨금</div>
+            <div class="stat-block">
+                <div class="stat-num">{{ prize_display }}</div>
+                <div class="stat-label">{{ winners_1st }}명 당첨</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">번호 합계</div>
+            <div class="stat-block">
+                <div class="stat-num">{{ number_sum }}</div>
+                <div class="stat-label">평균 {{ avg_sum }}과 {{ '유사' if abs_diff < 15 else '차이 있음' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">번호 상세 분석</div>
+        <div class="draw-analysis">
+            <table class="tbl">
+                <thead><tr><th>항목</th><th>값</th></tr></thead>
+                <tbody>
+                    <tr><td>홀수/짝수</td><td><strong>{{ odd_count }}홀 {{ even_count }}짝</strong></td></tr>
+                    <tr><td>고저 비율</td><td><strong>{{ low_count }}저 {{ high_count }}고</strong> (기준: 23)</td></tr>
+                    <tr><td>번호 합계</td><td><strong>{{ number_sum }}</strong> (평균 {{ avg_sum }})</td></tr>
+                    <tr><td>번호 구간</td><td>{% for range_name, count in range_dist.items() %}<span class="tag">{{ range_name }}: {{ count }}개</span>{% endfor %}</td></tr>
+                    <tr><td>연속번호</td><td>{{ '있음 (' + consecutive_nums + ')' if has_consecutive else '없음' }}</td></tr>
+                    <tr><td>끝수 분포</td><td>{{ last_digits }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">당첨번호 역대 출현 횟수</div>
+        <div class="draw-freq">
+            {% for n, count in number_freq.items() %}
+            <div class="draw-freq-item">
+                <span class="ball ball-{{ '1' if n <= 10 else '2' if n <= 20 else '3' if n <= 30 else '4' if n <= 40 else '5' }}">{{ n }}</span>
+                <div class="draw-freq-bar-wrap"><div class="draw-freq-bar" style="width:{{ (count / max_freq * 100) | int }}%"></div></div>
+                <span class="draw-freq-count">{{ count }}회</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">제 {{ draw.draw_no }}회 로또 분석 요약</div>
+        <div class="draw-text-content">
+            <p>{{ draw.date }}에 추첨된 제 {{ draw.draw_no }}회 로또 6/45 당첨번호는 <strong>{{ draw.numbers | join(', ') }}</strong>이며, 보너스 번호는 <strong>{{ draw.bonus }}</strong>입니다.</p>
+            <p>이번 회차의 당첨번호 6개의 합계는 <strong>{{ number_sum }}</strong>으로, 역대 평균 합계 {{ avg_sum }}{{ '과 유사한 수준입니다.' if abs_diff < 15 else '보다 ' + ('높은' if number_sum > avg_sum else '낮은') + ' 수치입니다.' }} 홀짝 비율은 {{ odd_count }}:{{ even_count }}이며, {{ '연속번호(' + consecutive_nums + ')가 포함되어 있습니다.' if has_consecutive else '연속번호는 포함되지 않았습니다.' }}</p>
+            <p>1등 당첨금은 {{ prize_display }}이며, 총 {{ winners_1st }}명이 당첨되었습니다. {% if winners_1st > 0 %}1인당 약 {{ per_person_prize }}의 당첨금을 수령하게 됩니다.{% endif %}</p>
+        </div>
+    </div>
+
+    <div class="draw-nav fade-in">
+        {% if draw.draw_no > 1 %}
+        <a href="/draw/{{ draw.draw_no - 1 }}" class="draw-nav-btn">&lsaquo; 제 {{ draw.draw_no - 1 }}회</a>
+        {% else %}<span></span>{% endif %}
+        <a href="/" class="draw-nav-btn draw-nav-home">전체 보기</a>
+        {% if next_draw %}
+        <a href="/draw/{{ draw.draw_no + 1 }}" class="draw-nav-btn">제 {{ draw.draw_no + 1 }}회 &rsaquo;</a>
+        {% else %}<span></span>{% endif %}
+    </div>
+
+</div>
+</div>
+{% endblock %}
