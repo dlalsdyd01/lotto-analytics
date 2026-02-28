@@ -108,7 +108,7 @@ function toggleDark(){
     if(!c)return;
     const ctx=c.getContext('2d');
     let w,h,pts=[];
-    const COUNT=60, DIST=150, SPEED=0.3;
+    const COUNT=80, DIST=170, SPEED=0.35;
 
     function resize(){
         w=c.width=window.innerWidth;
@@ -124,7 +124,7 @@ function toggleDark(){
                 y:Math.random()*h,
                 vx:(Math.random()-0.5)*SPEED,
                 vy:(Math.random()-0.5)*SPEED,
-                r:Math.random()*2+1
+                r:Math.random()*2.5+1.2
             });
         }
     }
@@ -136,7 +136,7 @@ function toggleDark(){
     function draw(){
         ctx.clearRect(0,0,w,h);
         const dark=isDark();
-        const dotColor=dark?'rgba(99,102,241,0.8)':'rgba(99,102,241,0.5)';
+        const dotColor=dark?'rgba(99,102,241,0.9)':'rgba(99,102,241,0.7)';
         const lineColor=dark?'rgba(99,102,241,{a})':'rgba(99,102,241,{a})';
 
         // update positions
@@ -153,10 +153,10 @@ function toggleDark(){
                 const dy=pts[i].y-pts[j].y;
                 const d=Math.sqrt(dx*dx+dy*dy);
                 if(d<DIST){
-                    const a=(1-d/DIST)*0.4;
+                    const a=(1-d/DIST)*0.6;
                     ctx.beginPath();
                     ctx.strokeStyle=dark?`rgba(99,102,241,${a})`:`rgba(99,102,241,${a})`;
-                    ctx.lineWidth=0.8;
+                    ctx.lineWidth=1.2;
                     ctx.moveTo(pts[i].x,pts[i].y);
                     ctx.lineTo(pts[j].x,pts[j].y);
                     ctx.stroke();

@@ -50,10 +50,10 @@ body {
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.4;
+    opacity: 0.7;
 }
 [data-theme="dark"] #mesh-bg {
-    opacity: 0.3;
+    opacity: 0.55;
 }
 
 /* ── Layout Wrapper (사이드바 + 메인) ── */
