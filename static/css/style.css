@@ -29,13 +29,9 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-html {
-    background: var(--bg);
-}
-
 body {
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: transparent;
+    background: var(--bg);
     color: var(--text);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -45,43 +41,19 @@ body {
     overflow-x: hidden;
 }
 
-/* ── 배경 오로라 글로우 ── */
-body::before,
-body::after {
-    content: '';
+/* ── 기하학 메쉬 배경 캔버스 ── */
+#mesh-bg {
     position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
 }
-body::before {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(99,102,241,0.15), transparent 70%);
-    top: -10%;
-    left: -5%;
-    animation: auroraA 15s ease-in-out infinite alternate;
-}
-body::after {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(6,182,212,0.12), transparent 70%);
-    bottom: -10%;
-    right: -5%;
-    animation: auroraB 18s ease-in-out infinite alternate;
-}
-
-@keyframes auroraA {
-    0%   { transform: translate(0, 0) scale(1); }
-    50%  { transform: translate(15vw, 20vh) scale(1.2); }
-    100% { transform: translate(5vw, 40vh) scale(0.9); }
-}
-@keyframes auroraB {
-    0%   { transform: translate(0, 0) scale(1); }
-    50%  { transform: translate(-20vw, -15vh) scale(1.1); }
-    100% { transform: translate(-10vw, -30vh) scale(0.95); }
+[data-theme="dark"] #mesh-bg {
+    opacity: 0.3;
 }
 
 /* ── Layout Wrapper (사이드바 + 메인) ── */
@@ -2561,14 +2533,6 @@ body::after {
     --shadow-hover: 0 2px 8px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2);
 }
 
-[data-theme="dark"] body::before {
-    background: radial-gradient(circle, rgba(99,102,241,0.25), transparent 70%);
-    opacity: 0.4;
-}
-[data-theme="dark"] body::after {
-    background: radial-gradient(circle, rgba(6,182,212,0.20), transparent 70%);
-    opacity: 0.35;
-}
 
 [data-theme="dark"] .header {
     background: rgba(26,26,26,0.85);
