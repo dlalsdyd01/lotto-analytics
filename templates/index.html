@@ -978,10 +978,9 @@ function shareKakao() {
         return;
     }
 
-    // Kakao SDK 초기화 (JavaScript Key 필요)
+    // Kakao SDK 초기화
     if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
-        // TODO: Kakao JavaScript Key로 교체 필요
-        // Kakao.init('YOUR_JAVASCRIPT_KEY');
+        Kakao.init('73452c94a87a1f8e8918dc1d67e81bba');
     }
 
     const predictions = appData.analysis.predictions;

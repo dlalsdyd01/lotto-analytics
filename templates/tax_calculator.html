@@ -60,14 +60,14 @@
                 <table class="tbl" style="margin:16px 0;">
                     <thead><tr><th>당첨금 구간</th><th>소득세</th><th>지방소득세</th><th>합계</th></tr></thead>
                     <tbody>
-                        <tr><td>5만원 이하</td><td>비과세</td><td>비과세</td><td><strong>0%</strong></td></tr>
-                        <tr><td>5만원 초과 ~ 3억원</td><td>20%</td><td>2%</td><td><strong>22%</strong></td></tr>
+                        <tr><td>200만원 이하</td><td>비과세</td><td>비과세</td><td><strong>0%</strong></td></tr>
+                        <tr><td>200만원 초과 ~ 3억원</td><td>20%</td><td>2%</td><td><strong>22%</strong></td></tr>
                         <tr><td>3억원 초과</td><td>30%</td><td>3%</td><td><strong>33%</strong></td></tr>
                     </tbody>
                 </table>
-                <p>3억원을 초과하는 당첨금의 경우, 3억원까지는 22%, 3억원 초과분에 대해서는 33%가 적용됩니다.</p>
+                <p>200만원 이하는 비과세이며, 200만원 초과 ~ 3억원까지는 22%, 3억원 초과분에 대해서는 33%가 적용됩니다.</p>
                 <div class="info-warn">
-                    <strong>참고:</strong> 이 계산기는 2024년 기준 세법을 적용합니다. 실제 세금은 세법 개정에 따라 달라질 수 있습니다.
+                    <strong>참고:</strong> 이 계산기는 2025년 기준 세법을 적용합니다 (2023년 개정 반영). 실제 세금은 세법 개정에 따라 달라질 수 있습니다.
                 </div>
             </div>
         </div>
@@ -88,7 +88,7 @@ function calculateTax(){
     const raw=document.getElementById('tax-amount').value.replace(/[^0-9]/g,'');
     const amount=parseInt(raw);if(!amount||amount<=0)return;
     let tax=0,detail=[];
-    if(amount<=50000){tax=0;detail.push({l:'비과세 (5만원 이하)',a:0});}
+    if(amount<=2000000){tax=0;detail.push({l:'비과세 (200만원 이하)',a:0});}
     else if(amount<=3e8){const i=amount*0.20,lo=amount*0.02;tax=i+lo;detail.push({l:'소득세 (20%)',a:Math.floor(i)});detail.push({l:'지방소득세 (2%)',a:Math.floor(lo)});}
     else{const b=3e8,o=amount-b,i1=b*0.20,l1=b*0.02,i2=o*0.30,l2=o*0.03;tax=i1+l1+i2+l2;detail.push({l:'소득세 - 3억원 이하분 (20%)',a:Math.floor(i1)});detail.push({l:'지방소득세 - 3억원 이하분 (2%)',a:Math.floor(l1)});detail.push({l:'소득세 - 3억원 초과분 (30%)',a:Math.floor(i2)});detail.push({l:'지방소득세 - 3억원 초과분 (3%)',a:Math.floor(l2)});}
     tax=Math.floor(tax);const net=amount-tax,rate=((tax/amount)*100).toFixed(1);
