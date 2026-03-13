@@ -1,6 +1,8 @@
 import requests
 import json
 import os
+import threading
+import time
 from datetime import datetime
 
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lotto_cache.json')
@@ -94,28 +96,63 @@ def save_cache(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def _fetch_draw_from_dhlottery(draw_no):
+    """동행복권 공식 API에서 특정 회차 데이터 가져오기"""
+    try:
+        resp = requests.get(DHLOTTERY_URL.format(draw_no), timeout=10)
+        data = resp.json()
+        if data.get('returnValue') != 'success':
+            return None
+        return {
+            'draw_no': data['drwNo'],
+            'date': data['drwNoDate'],
+            'numbers': sorted([data[f'drwtNo{i}'] for i in range(1, 7)]),
+            'bonus': data['bnusNo'],
+            'prize_1st': data.get('firstWinamnt', 0),
+            'winners_1st': data.get('firstPrzwnerCo', 0),
+        }
+    except Exception as e:
+        print(f'동행복권 API 오류 (회차 {draw_no}): {e}')
+        return None
+
+
 def fetch_all_draws():
     """모든 회차 데이터 수집 (캐시 활용)"""
     cached = load_cache()
+    expected_latest = get_latest_draw_number()
+
     if cached and len(cached) > 1000:
-        # 캐시가 충분하면 최신 데이터만 확인
-        try:
-            resp = requests.get(LATEST_URL, timeout=10)
-            latest = _convert_smok95_format(resp.json())
-            cached_nos = {d['draw_no'] for d in cached}
-            if latest['draw_no'] not in cached_nos:
-                cached.append(latest)
+        cached_nos = {d['draw_no'] for d in cached}
+        cached_max = max(cached_nos)
+        missing = [n for n in range(cached_max + 1, expected_latest + 1) if n not in cached_nos]
+
+        if not missing:
+            return cached
+
+        if len(missing) <= 3:
+            # 빠진 회차가 적으면 개별 수집 (동행복권 API 우선, 실패 시 전체 재수집)
+            updated = False
+            for draw_no in missing:
+                draw = _fetch_draw_from_dhlottery(draw_no)
+                if draw:
+                    cached.append(draw)
+                    updated = True
+                    print(f'{draw_no}회차 데이터 추가 완료')
+            if updated:
                 cached.sort(key=lambda x: x['draw_no'])
                 save_cache(cached)
-        except Exception:
-            pass
-        return cached
+                return cached
+            # 개별 수집 실패 시 전체 재수집으로 폴백
+            print(f'개별 수집 실패, 전체 재수집 시도...')
 
-    # 전체 데이터 새로 가져오기
+        # 빠진 회차가 많거나 개별 수집 실패 시 전체 재수집
+        print(f'캐시가 {len(missing)}회차 뒤처져 있어 전체 재수집합니다.')
+
     all_data = fetch_all_from_api()
     if all_data:
         save_cache(all_data)
-    return all_data
+        return all_data
+    return cached if cached else []
 
 
 def get_draws():
@@ -124,6 +161,29 @@ def get_draws():
     if cached and len(cached) > 100:
         return cached
     return fetch_all_draws()
+
+
+def _auto_refresh_loop():
+    """1시간마다 새 회차 데이터를 자동으로 확인·갱신"""
+    while True:
+        time.sleep(3600)
+        try:
+            cached = load_cache()
+            if not cached:
+                continue
+            cached_max = max(d['draw_no'] for d in cached)
+            expected = get_latest_draw_number()
+            if expected > cached_max:
+                print(f'[자동갱신] 새 회차 감지 ({cached_max} → {expected}), 데이터 수집 중...')
+                fetch_all_draws()
+                print('[자동갱신] 완료')
+        except Exception as e:
+            print(f'[자동갱신] 오류: {e}')
+
+
+# 자동 갱신 백그라운드 스레드 시작
+_refresh_thread = threading.Thread(target=_auto_refresh_loop, daemon=True)
+_refresh_thread.start()
 
 
 def get_fetch_status():
