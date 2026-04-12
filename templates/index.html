@@ -20,7 +20,7 @@
 {% block header %}
 <header class="header">
     <div class="header-inner">
-        <span class="logo">Lotto Lab</span>
+        <a href="/" class="logo" style="text-decoration:none;color:inherit;">Lotto Lab</a>
         <div class="header-actions">
             <button class="header-btn" onclick="refreshData(event)">데이터 갱신</button>
         </div>
@@ -37,6 +37,8 @@
         <button class="tab-item" data-tab="prediction">추천번호</button>
         <button class="tab-item" data-tab="stores">판매점</button>
         <button class="tab-item" data-tab="probability">확률 교실</button>
+        <a class="tab-item" href="/my-numbers" style="text-decoration:none;">내 번호 관리</a>
+        <a class="tab-item" href="/tax-calculator" style="text-decoration:none;">세금 계산기</a>
     </div>
 </div>
 
@@ -572,13 +574,30 @@ function formatMoney(val) {
 
 // Tabs
 document.querySelectorAll('.tab-item').forEach(tab => {
-    tab.addEventListener('click', () => {
+    tab.addEventListener('click', (e) => {
+        if(!tab.dataset.tab) return; // <a> 링크는 기본 동작
+        e.preventDefault();
         document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
     });
 });
+
+// ?tab=X 쿼리 지원
+(function(){
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('tab');
+    if(!t) return;
+    const target = document.querySelector(`.tab-item[data-tab="${t}"]`);
+    if(target){
+        document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        target.classList.add('active');
+        const content = document.getElementById('tab-' + t);
+        if(content) content.classList.add('active');
+    }
+})();
 
 // Load
 async function loadData() {

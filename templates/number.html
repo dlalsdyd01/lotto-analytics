@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}로또 번호 {{ number }} 통계 분석 - Lotto Lab{% endblock %}
+{% block description %}로또 번호 {{ number }}의 총 {{ total_count }}회 출현, 최근 출현 회차, 함께 자주 나온 번호 등 상세 통계. 2002년 이후 전체 데이터 기준.{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}로또 번호 {{ number }} 통계 분석{% endblock %}
+{% block og_desc %}로또 번호 {{ number }}의 출현 빈도, 최근 출현, 동반 번호 분석{% endblock %}
+
+{% block header_right %}
+<nav class="header-nav">
+    {% if number > 1 %}<a href="/number/{{ number - 1 }}" class="header-btn">&lsaquo; {{ number - 1 }}</a>{% endif %}
+    {% if number < 45 %}<a href="/number/{{ number + 1 }}" class="header-btn">{{ number + 1 }} &rsaquo;</a>{% endif %}
+</nav>
+{% endblock %}
+
+{% block body %}
+<div class="layout-wrapper" style="grid-template-columns:1fr;">
+<div class="container" style="max-width:860px;">
+
+    <div class="card fade-in">
+        <a href="/numbers" class="page-back">&larr; 전체 번호 목록</a>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+            <div style="width:72px;height:72px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;">{{ number }}</div>
+            <div>
+                <div style="font-size:22px;font-weight:700;">로또 번호 {{ number }}</div>
+                <div style="color:var(--text-2);font-size:14px;">전체 {{ total_draws }}회차 중 <strong>{{ total_count }}회</strong> 출현 (출현율 {{ appearance_rate }}%)</div>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:10px;margin-bottom:24px;">
+            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);">
+                <div style="font-size:12px;color:var(--text-2);margin-bottom:4px;">전체 출현</div>
+                <div style="font-size:20px;font-weight:700;">{{ total_count }}회</div>
+            </div>
+            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);">
+                <div style="font-size:12px;color:var(--text-2);margin-bottom:4px;">최근 50회 출현</div>
+                <div style="font-size:20px;font-weight:700;">{{ recent_count }}회</div>
+            </div>
+            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);">
+                <div style="font-size:12px;color:var(--text-2);margin-bottom:4px;">보너스 번호 출현</div>
+                <div style="font-size:20px;font-weight:700;">{{ bonus_count }}회</div>
+            </div>
+            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);">
+                <div style="font-size:12px;color:var(--text-2);margin-bottom:4px;">기대 출현 대비</div>
+                <div style="font-size:20px;font-weight:700;color:{% if deviation > 0 %}#10b981{% else %}#ef4444{% endif %};">{% if deviation > 0 %}+{% endif %}{{ deviation }}회</div>
+            </div>
+        </div>
+
+        <h3 style="margin:24px 0 12px;font-size:17px;">최근 출현 회차</h3>
+        {% if recent_appearances %}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+            {% for d in recent_appearances %}
+            <a href="/draw/{{ d.draw_no }}" style="background:var(--bg);padding:8px 14px;border-radius:var(--radius-sm);text-decoration:none;color:var(--text);font-size:13px;border:1px solid var(--border);">
+                제 {{ d.draw_no }}회 <span style="color:var(--text-2);">· {{ d.date }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:var(--text-2);">출현 기록이 없습니다.</p>
+        {% endif %}
+
+        <h3 style="margin:24px 0 12px;font-size:17px;">함께 자주 나온 번호 Top 10</h3>
+        <p style="color:var(--text-2);font-size:13px;margin-bottom:12px;">번호 {{ number }}이(가) 당첨번호에 포함된 회차에서 가장 자주 함께 등장한 다른 번호들입니다.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:8px;margin-bottom:20px;">
+            {% for p in partners %}
+            <a href="/number/{{ p.num }}" style="background:var(--bg);padding:12px;border-radius:var(--radius-sm);text-decoration:none;display:flex;align-items:center;gap:10px;border:1px solid var(--border);">
+                <span style="width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;">{{ p.num }}</span>
+                <span style="color:var(--text-2);font-size:13px;">{{ p.count }}회 동반</span>
+            </a>
+            {% endfor %}
+        </div>
+
+        <h3 style="margin:24px 0 12px;font-size:17px;">번호 {{ number }} 해설</h3>
+        <p>로또 6/45에서 각 번호의 기대 출현 횟수는 전체 회차 × 6 ÷ 45 ≈ <strong>{{ expected_count }}회</strong>입니다. 번호 {{ number }}은(는) 실제 <strong>{{ total_count }}회</strong> 출현하여 기대값 대비 {% if deviation > 0 %}약 {{ deviation }}회 더 많이{% elif deviation < 0 %}약 {{ deviation|abs }}회 적게{% else %}정확히 기대값만큼{% endif %} 나왔습니다.</p>
+        <p style="margin-top:10px;">이러한 편차는 무작위 추첨에서 자연스럽게 발생하는 통계적 요동 범위 내에 있습니다. 특정 번호가 평균보다 많이/적게 나왔다고 해서 미래 추첨에서 더 나오거나 덜 나올 확률이 변하지는 않습니다. 각 회차는 이전 결과와 완전히 독립된 사건입니다.</p>
+
+        <div class="info-warn" style="margin-top:24px;">
+            본 통계는 과거 데이터 분석일 뿐이며, 미래 당첨을 예측하지 않습니다. 참고용으로만 활용하세요.
+        </div>
+
+        <p style="margin-top:20px;"><a href="/numbers">← 전체 번호 목록으로</a></p>
+    </div>
+</div>
+</div>
+{% endblock %}

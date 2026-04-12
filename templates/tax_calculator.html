@@ -8,6 +8,19 @@
 {% block tw_desc %}로또 당첨금 실수령액을 계산해보세요.{% endblock %}
 
 {% block body %}
+<div class="tab-bar-wrap">
+    <div class="tab-bar">
+        <a class="tab-item" href="/?tab=checker" style="text-decoration:none;">당첨확인</a>
+        <a class="tab-item" href="/?tab=history" style="text-decoration:none;">당첨번호</a>
+        <a class="tab-item" href="/?tab=stats" style="text-decoration:none;">통계</a>
+        <a class="tab-item" href="/?tab=prediction" style="text-decoration:none;">추천번호</a>
+        <a class="tab-item" href="/?tab=stores" style="text-decoration:none;">판매점</a>
+        <a class="tab-item" href="/?tab=probability" style="text-decoration:none;">확률 교실</a>
+        <a class="tab-item" href="/my-numbers" style="text-decoration:none;">내 번호 관리</a>
+        <a class="tab-item active" href="/tax-calculator" style="text-decoration:none;">세금 계산기</a>
+    </div>
+</div>
+
 <div class="layout-wrapper" style="grid-template-columns:1fr;">
 <div class="container" style="max-width:860px;">
 
