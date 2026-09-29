@@ -40,6 +40,7 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    word-break: keep-all;
 }
 
 a { color: var(--gold); }
@@ -167,8 +168,6 @@ main { padding: 12px 0 24px; }
 }
 .btn.primary:not(:disabled):hover { box-shadow: 0 14px 38px -8px rgba(246, 196, 83, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
 .btn.ghost:hover { background: rgba(255, 255, 255, 0.07); }
-#skip { align-self: flex-start; }
-#skip[hidden] { display: block; visibility: hidden; }  /* 자리 유지해 레이아웃 흔들림 방지 */
 
 /* ── 추첨 과정 패널 ─────────────────── */
 .stage-process {
@@ -405,8 +404,7 @@ main { padding: 12px 0 24px; }
     .stage-process { text-align: left; }
     .stage-controls { align-items: center; margin-top: 8px; }
     .actions { width: 100%; }
-    #skip { align-self: center; }
-    .sub br, .stage h1 br { display: none; }
+    .stage h1 br { display: none; }
     .stage h1 em { display: block; }
     .grid-2 { grid-template-columns: 1fr; }
 }

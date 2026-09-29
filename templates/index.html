@@ -51,7 +51,6 @@
             <button id="generate" class="btn primary">추첨하기</button>
             <button id="copy-all" class="btn ghost" aria-label="번호 복사">번호 복사</button>
         </div>
-        <button type="button" class="link" id="skip" hidden>건너뛰기</button>
         <p id="error" class="error" hidden></p>
     </div>
 
@@ -212,7 +211,6 @@
     const stepEl = (n) => steps[n - 1];
     const fmt = (n) => n.toLocaleString('ko-KR');
     const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-    let skipping = false;
     let timer = null;
 
     function setStatus(state) {
@@ -261,13 +259,13 @@
         setStatus('done');
     }
 
-    // 한 단계를 duration 동안 진행 (건너뛰기 시 즉시 완료)
+    // 한 단계를 duration 동안 진행
     function runStep(n, duration, frame) {
         setStep(n, 'active');
         return new Promise((resolve) => {
             const start = performance.now();
             const tick = (now) => {
-                const t = skipping ? 1 : Math.min(1, (now - start) / duration);
+                const t = Math.min(1, (now - start) / duration);
                 setBar(n, t);
                 frame(t);
                 if (t < 1) requestAnimationFrame(tick);
@@ -296,7 +294,6 @@
     async function generate() {
         const btn = $('generate');
         btn.disabled = true;
-        skipping = false;
         try {
             const request = pick ? Promise.resolve(pick) : fetch('/api/predict?sets=1').then(async (res) => {
                 const data = await res.json();
@@ -308,7 +305,6 @@
             resetSteps();
             $('results').innerHTML = '<li class="placeholder">분석 중…</li>';
             if (!reduceMotion) {
-                $('skip').hidden = false;
                 setStatus('analyzing');
                 await analyze();
             }
@@ -326,7 +322,6 @@
             $('error').textContent = err.message;
             $('error').hidden = false;
         } finally {
-            $('skip').hidden = true;
             btn.disabled = false;
             if (pick) btn.textContent = '추첨 다시 보기';
         }
@@ -359,7 +354,7 @@
     async function drawWithMachine(numbers) {
         await machineReady;
         const order = [...numbers].sort(() => Math.random() - 0.5);
-        if (reduceMotion || skipping) {
+        if (reduceMotion) {
             fillTray(order);
             return;
         }
@@ -367,10 +362,6 @@
         let i = 0;
         await machine.run(order, (n) => { slots[i++].innerHTML = ballHtml(n, 0); setCount(i); });
     }
-    $('skip').addEventListener('click', () => {
-        skipping = true;
-        if (machine) machine.skip();
-    });
 
     const pickText = (p) => p.numbers.map((n) => String(n).padStart(2, '0')).join(' ');
 
