@@ -3,40 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0c11">
     <meta name="google-adsense-account" content="ca-pub-3398247421662455">
-    <title>{% block title %}Lotto Lab{% endblock %}</title>
-    <meta name="description" content="{% block description %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
+    <meta name="naver-site-verification" content="84c152c080fb1e302e45d57a3e2657418b707042" />
+    <title>{% block title %}Lotto Lab - 로또 번호 예측{% endblock %}</title>
+    <meta name="description" content="{% block description %}역대 로또 6/45 당첨 데이터 기반 이번 주 로또 예측번호 생성기{% endblock %}">
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}Lotto Lab{% endblock %}">
-    <meta property="og:description" content="{% block og_desc %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ self.title() }}">
+    <meta property="og:description" content="{{ self.description() }}">
     <meta property="og:url" content="https://lottoanalytics.co.kr{{ request.path }}">
     <meta property="og:site_name" content="Lotto Lab">
     <meta property="og:image" content="https://lottoanalytics.co.kr/static/img/og-image.svg">
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block tw_title %}Lotto Lab{% endblock %}">
-    <meta name="twitter:description" content="{% block tw_desc %}로또 6/45 역대 당첨번호 통계 분석{% endblock %}">
-    <meta name="twitter:image" content="https://lottoanalytics.co.kr/static/img/og-image.svg">
 
-    <meta name="naver-site-verification" content="84c152c080fb1e302e45d57a3e2657418b707042" />
     <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
     <link rel="canonical" href="https://lottoanalytics.co.kr{{ request.path }}">
-    <link rel="stylesheet" href="/static/css/style.css?v={{ range(100000) | random }}">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
-
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
+    <link rel="stylesheet" href="/static/css/style.css?v=16">
     {% block head_extra %}{% endblock %}
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3398247421662455"
-         crossorigin="anonymous"></script>
-
-    <!-- Google Analytics 4 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3398247421662455" crossorigin="anonymous"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-925QJ7TR52"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -44,128 +32,32 @@
         gtag('js', new Date());
         gtag('config', 'G-925QJ7TR52');
     </script>
-
-    {% block schema %}{% endblock %}
 </head>
 <body>
-<canvas id="mesh-bg"></canvas>
-
-{% block header %}
 <header class="header">
-    <div class="header-inner">
-        <a href="/" class="logo" style="text-decoration:none;color:inherit;">Lotto Lab</a>
-        {% block header_right %}
-        <a href="/" class="header-btn">홈으로</a>
-        {% endblock %}
+    <div class="wrap header-inner">
+        <a href="/" class="logo"><span class="logo-mark" aria-hidden="true"></span>LOTTO<span>LAB</span></a>
+        <span class="header-tag">로또 6/45 예측번호</span>
     </div>
 </header>
-{% endblock %}
 
+<main class="wrap">
 {% block body %}{% endblock %}
+</main>
 
-<footer class="page-footer">
-    <div class="footer-links">
-        <a href="/">홈</a>
-        <a href="/my-numbers">내 번호</a>
-        <a href="/numbers">번호별 통계</a>
-        <a href="/guide">가이드</a>
-        <a href="/probability">확률 교실</a>
-        <a href="/tax-calculator">세금계산기</a>
-        <a href="/faq">FAQ</a>
-        <a href="/privacy">개인정보처리방침</a>
-        <a href="/terms">이용약관</a>
-        <a href="/about">소개</a>
-        <a href="/contact">연락처</a>
+<footer class="footer">
+    <div class="wrap">
+        <nav class="footer-links">
+            <a href="/">홈</a>
+            <a href="/privacy">개인정보처리방침</a>
+            <a href="/terms">이용약관</a>
+            <a href="/contact">연락처</a>
+        </nav>
+        <p>로또는 완전한 무작위 추첨이며, 본 사이트의 번호는 참고용으로 당첨을 보장하지 않습니다.<br>
+        도박 문제 상담: 한국도박문제예방치유원 ☎ 1336 · &copy; 2024-2026 Lotto Lab</p>
     </div>
-    <p>&copy; 2024-2026 Lotto Lab. 로또는 완전한 무작위 추첨이며, 과거 데이터로 미래를 예측할 수 없습니다.</p>
 </footer>
 
-<!-- 스크롤 맨 위로 버튼 -->
-<button id="scroll-top-btn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="맨 위로">&#8593;</button>
-<script>
-(function(){
-    const btn=document.getElementById('scroll-top-btn');
-    window.addEventListener('scroll',()=>{btn.classList.toggle('show',window.scrollY>400);});
-})();
-
-
-</script>
-
 {% block scripts %}{% endblock %}
-
-<!-- 기하학 메쉬 배경 -->
-<script>
-(function(){
-    const c=document.getElementById('mesh-bg');
-    if(!c)return;
-    const ctx=c.getContext('2d');
-    let w,h,pts=[];
-    const COUNT=80, DIST=170, SPEED=0.35;
-
-    function resize(){
-        w=c.width=window.innerWidth;
-        h=c.height=window.innerHeight;
-    }
-
-    function init(){
-        resize();
-        pts=[];
-        for(let i=0;i<COUNT;i++){
-            pts.push({
-                x:Math.random()*w,
-                y:Math.random()*h,
-                vx:(Math.random()-0.5)*SPEED,
-                vy:(Math.random()-0.5)*SPEED,
-                r:Math.random()*2.5+1.2
-            });
-        }
-    }
-
-    function draw(){
-        ctx.clearRect(0,0,w,h);
-        const dotColor='rgba(129,140,248,0.9)';
-        const lr=129,lg=140,lb=248;
-
-        // update positions
-        for(const p of pts){
-            p.x+=p.vx; p.y+=p.vy;
-            if(p.x<0||p.x>w)p.vx*=-1;
-            if(p.y<0||p.y>h)p.vy*=-1;
-        }
-
-        // draw lines
-        for(let i=0;i<pts.length;i++){
-            for(let j=i+1;j<pts.length;j++){
-                const dx=pts[i].x-pts[j].x;
-                const dy=pts[i].y-pts[j].y;
-                const d=Math.sqrt(dx*dx+dy*dy);
-                if(d<DIST){
-                    const a=(1-d/DIST)*0.8;
-                    ctx.beginPath();
-                    ctx.strokeStyle=`rgba(${lr},${lg},${lb},${a})`;
-                    ctx.lineWidth=1.5;
-                    ctx.moveTo(pts[i].x,pts[i].y);
-                    ctx.lineTo(pts[j].x,pts[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        // draw dots
-        for(const p of pts){
-            ctx.beginPath();
-            ctx.fillStyle=dotColor;
-            ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-            ctx.fill();
-        }
-
-        requestAnimationFrame(draw);
-    }
-
-    init();
-    window.addEventListener('resize',()=>{resize();});
-    draw();
-})();
-</script>
 </body>
 </html>

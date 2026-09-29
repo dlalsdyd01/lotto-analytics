@@ -1,34 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}{{ title }} - Lotto Lab{% endblock %}
-{% block description %}{{ description }}{% endblock %}
-{% block og_title %}{{ title }} - Lotto Lab{% endblock %}
-{% block og_desc %}{{ description }}{% endblock %}
-{% block tw_title %}{{ title }} - Lotto Lab{% endblock %}
-{% block tw_desc %}{{ description }}{% endblock %}
-
-{% block schema %}
-{% if is_faq %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": {{ faq_schema | safe }}
-}
-</script>
-{% endif %}
-{% endblock %}
+{% block description %}Lotto Lab {{ title }}{% endblock %}
 
 {% block body %}
-<div class="layout-wrapper" style="grid-template-columns:1fr;">
-<div class="container" style="max-width:860px;">
-    <div class="card fade-in">
-        <a href="/" class="page-back">&larr; 홈으로 돌아가기</a>
-        <div class="card-header" style="font-size:22px;margin-bottom:20px;">{{ title }}</div>
-        <div class="page-content">
-            {{ content | safe }}
-        </div>
-    </div>
-</div>
-</div>
+<article class="card page">
+    <a href="/" class="back">&larr; 예측번호 보러 가기</a>
+    <h1>{{ title }}</h1>
+    {{ content | safe }}
+</article>
 {% endblock %}
